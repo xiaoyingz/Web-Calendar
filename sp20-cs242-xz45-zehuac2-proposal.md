@@ -38,7 +38,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 - CRUD operations for daily To-do List
 
 ### UI Sketch
-Montyly Overview
+Monthly Overview
 
 ![image info](pictures/monthly.png)
 
