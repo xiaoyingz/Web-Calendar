@@ -39,7 +39,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 
 ### Scope of the project
 
-- Not familiar with React
+- This project currently might be only deployed on localhost
 - POST API may only create 1 task at a time
 - Assuming PUT API only allows to update 1 attribute at a time
 
@@ -63,7 +63,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 - Week 3:
 
   1. Design VMC architecture for the project (Z & L)
-  2. Bind the frontend and backend, implement controllers for each UI component (L)
+  2. Bind the frontend and backend, implement controllers for each UI component (Z & L)
   3. Frontend can visualize daily routines in terms of different kinds of tasks. (L)
 
 - Week 4:
@@ -72,41 +72,55 @@ Current web calendars like Google Calendar usually have professional UI for mont
   2. API for Weather forecast(Z & L)
   3. Polish the UI design to be more user-friendly(Z & L)
 
+## Detailed division of labor by week
+
+| Week               | Qirui Lu                            | Xiaoying Zhu                        |
+| :----------: | :---------------------------- | :---------------------------- |
+| Week 1|- Design schema for to-do and daily summary <br> - List required APIs for backend based on primary functionality of frontend design <br> - Check error messages of backend and use of status codes <br> - test APIs using Postman|- Design schema for to-do and daily summary <br> - impelement desired API routes <br> - write exception classes and handle them in server <br> - test APIs using Postman <br> - Unit tests for query parser|
+| Week 2|- Static frontend UI <br> - Navigation bar and buttons for navigation between pages <br> - Manual test plan for UI design |- Command-line interface for thoroughly testing server API (simulate frondend request) <br> - Manual test plan for UI design|
+| Week 3|- Design VMC architecture for the project <br> - Responsive UI(search/add task) <br> - Data visualization|- Design VMC architecture for the project <br> - Responsive UI(edit/delete task)|
+| Week 4|- functionality of daily summary(frontend) <br> - API for Weather forecast <br> - Polish the UI design to be more user-friendly(mainly focus on pages related to add/search task)|- functionality of daily summary(backend) <br> - API for Weather forecast <br> - Polish the UI design to be more user-friendly(mainly focus on pages related to add/search task)|
+
 ## Rubrics
 
 ### Week 1
 
 | Category        | Total Score Allocated | Detailed Rubrics                                                                               |
 | --------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
-| MongoDB databse |          10           | 0: Didn't implement anything <br> 5: implement proper attributes <br> 10: connect the database |
-| Flask backend   |          10           | 0: Didn't implement anything <br> +2.5: implement each API(PUT GET POST DELETE)                |
-| Query parser    |          10           | 0: Didn't implement anything <br> +2.5: implement each type                                    |
-| Manual Test     |          10           | 0: Didn't implement tests <br> +2: per test                                                    |
-| Error handling  |          10           | 0: No error handler <br> 6: partial-correctly use status codes<br> 10: proper error handling   |
+| MongoDB databse |          3            | 0: Didn't implement anything <br> +1: implement proper attributes <br> +1: connect the database <br> +1: use environment variables for security |
+| Flask backend   |          5            | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)               |
+| Query parser    |          5            | 0: Didn't implement anything <br> +1.25: implement each type                                   |
+| Error handling  |          2            | 0: No error handling <br> +1: correct use of status code <br> +1: properly reporting errors    |
+| Manual test plan|          5            | 0: No manual test plan <br> +1: per test                                                       |
+| Unit Test       |          5            | 0: No unit test <br> +1: per unit test                                                     |
 
 ### Week 2
 
 | Category        | Total Score Allocated | Detailed Rubrics                                                                                               |
 | --------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
-| Monthly page    |          10           | 0: Didn't implement anything <br> 6: include main components <br> 10: properly organized with complete layouts |
-| Weekly page     |          10           | 0: Didn't implement anything <br> 6: include main components <br> 10: properly organized with complete layouts |
-| Daily page      |          10           | 0: Didn't implement anything <br> 6: include main components <br> 10: properly organized with complete layouts |
-| Page navigation |          10           | 0: Didn't implement anything <br> 5: Navigation for Monthly & Weekly<br> 3: Navigation for Daily               |
-| Test UI         |          10           | 0: Didn't implement tests <br> +2: per test                                                                    |
+| Overview page design|         3        | 0: Didn't implement anything <br> +1.5: be able to render monthly overview <br> +1.5: be able to render weekly overview |
+| Page navigation |          2           | responsive navigation bar and buttons for navigating                                                            |
+| Daily page      |          5           | 0: Didn't implement anything <br> +1.25: component for adding new task <br> +1.25: component for editing task <br> +1.25: component for deleting task <br> +1.25: component for searching|
+| CLI             |          5            | 0: Didn't implement tests <br> +1.25: per command line related to each API (PUT, POST, GET, DELETE)|
+| Manual test plan for CLI|          5           | 0: No manual test plan <br> +1: per test                                                                      |
+| Manual test plan for static UI|          5           | 0: No manual test plan <br> +1: per test |
 
 ### Week 3
 
 | Category         | Total Score Allocated | Detailed Rubrics                                                                                               |
 | ---------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
-| VMC architecture |          10           | 0: Didn't implement anything <br> 10: complete architecture                                                    |
-| Visualization    |          10           | 0: Didn't implement anything <br> 6: successfully collect data of tasks <br> 10: elegant visualization display |
-| Manual test      |          10           | 0: Didn't implement tests <br> +2: per test                                                                    |
+| Making requests |          5           | +1: be able to search task by keyword <br> +1: be able to delete a certain task <br> +1.5 be able to update a certain task <br> +1.5: be able to create a new task|
+| Rendering result    |          5           | +2.5: Rendering result of get request <br> +2.5: rendering error/success messages for all requests|
+| Data visualization    |          5           | +2.5: Display monthly top tags <br> +2.5: Display weekly top tags|
+| Manual test plan |          5            | 0: No manual test plan <br> +1: per test                                                                    |
+| Unit test|          5           | 0: No unit test <br> +1: per test                                                    |
 
 ### Week 4
 
 | Category      | Total Score Allocated | Detailed Rubrics                                                                               |
 | ------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
-| Daily summary |          10           | 0: Didn't implement anything <br> 5: Only backend or frontend <br> 10: complete implementation |
-| Weather API   |          10           | 0: Didn't implement anything <br> 5: valid request <br> 10: complete implementation            |
-| Manual test   |          10           | 0: Didn't implement tests <br> +2: per test                                                    |
-| Polish UI     |          10           | 5: Didn't polish <br> 10: user-friendly design                                                 |
+| Additionaly functionality(i.e. daily summary) backend|          5           | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)|
+| Additionaly functionality(i.e. daily summary) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
+| Weather API   |           5           | +2: successfully make API request <br> +2: properly render result <br> +1: hide |
+| Manual test plan|          5           | 0: No manual test plan <br> +1: per test                                                   |
+| Unit test|          5           | 0: No unit test <br> +1: per test                                                    |
