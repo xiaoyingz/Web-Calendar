@@ -37,6 +37,27 @@ Current web calendars like Google Calendar usually have professional UI for mont
 - Data(Task) analysis
 - CRUD operations for daily To-do List
 
+### UI Sketch
+Montyly Overview
+
+![image info](pictures/monthly.png)
+
+Weekly Overview
+
+![image info](pictures/weekly.png)
+
+Daily Overview
+
+![image info](pictures/daily.png)
+
+New Task
+
+![image info](pictures/add.png)
+
+Edit Task
+
+![image info](pictures/edit.png)
+
 ### Scope of the project
 
 - This project currently might be only deployed on localhost
@@ -84,6 +105,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 ## Rubrics
 
 ### Week 1
+[Week 1 calculator](https://drive.google.com/file/d/1CshEsQGbAE0xHlaYOFb_QOuW7hO4pyVo/view?usp=sharing)
 
 | Category        | Total Score Allocated | Detailed Rubrics                                                                               |
 | --------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
@@ -95,6 +117,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 | Unit Test       |          5            | 0: No unit test <br> +1: per unit test                                                     |
 
 ### Week 2
+[Week 2 calculator](https://drive.google.com/file/d/1YmRSdg5GNLXsE7QtrUlCxKqSIpJG56g6/view?usp=sharing)
 
 | Category        | Total Score Allocated | Detailed Rubrics                                                                                               |
 | --------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
@@ -106,6 +129,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 | Manual test plan for static UI|          5           | 0: No manual test plan <br> +1: per test |
 
 ### Week 3
+[Week 3 calculator](https://drive.google.com/file/d/1zrTETjDaKIPKvX0BeipJML5wxLMkWWj6/view?usp=sharing)
 
 | Category         | Total Score Allocated | Detailed Rubrics                                                                                               |
 | ---------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
@@ -116,6 +140,7 @@ Current web calendars like Google Calendar usually have professional UI for mont
 | Unit test|          5           | 0: No unit test <br> +1: per test                                                    |
 
 ### Week 4
+[Week 4 calculator](https://drive.google.com/file/d/1JZcPs00KbhCpV7-8D5UAcQBealD2sk99/view?usp=sharing)
 
 | Category      | Total Score Allocated | Detailed Rubrics                                                                               |
 | ------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
