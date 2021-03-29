@@ -1,10 +1,10 @@
 # A Web Diary Calendar
 
-Xiaoying Zhu (xz45) | Moderator: zehua chen (zehuac2)
+Xiaoying Zhu (xz45) | Moderator: Zehua Chen (zehuac2)
 
 Qirui Lu (qiruilu2) | Moderator: Amirthavarshini Sureshbabu (as43)
 
-This is a web app about a project for CS242
+This is a web app about a project for CS 242
 
 ## Abstract
 
