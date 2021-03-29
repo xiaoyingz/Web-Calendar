@@ -114,7 +114,7 @@ Edit Task
 | Query parser    |          5            | 0: Didn't implement anything <br> +1.25: implement each type                                   |
 | Error handling  |          2            | 0: No error handling <br> +1: correct use of status code <br> +1: properly reporting errors    |
 | Manual test plan|          5            | 0: No manual test plan <br> +1: per test                                                       |
-| Unit Test       |          5            | 0: No unit test <br> +1: per unit test                                                     |
+| Unit Test       |          5            | 0: No unit test <br> +0.5: per unit test                                                     |
 
 ### Week 2
 [Week 2 calculator](https://drive.google.com/file/d/1YmRSdg5GNLXsE7QtrUlCxKqSIpJG56g6/view?usp=sharing)
@@ -125,7 +125,7 @@ Edit Task
 | Page navigation |          2           | responsive navigation bar and buttons for navigating                                                            |
 | Daily page      |          5           | 0: Didn't implement anything <br> +1.25: component for adding new task <br> +1.25: component for editing task <br> +1.25: component for deleting task <br> +1.25: component for searching|
 | CLI             |          5            | 0: Didn't implement tests <br> +1.25: per command line related to each API (PUT, POST, GET, DELETE)|
-| Manual test plan for CLI|          5           | 0: No manual test plan <br> +1: per test                                                                      |
+| Pylint|          5           | +2: 7.5 and above <br> +3: 8.5 and above|
 | Manual test plan for static UI|          5           | 0: No manual test plan <br> +1: per test |
 
 ### Week 3
@@ -137,7 +137,7 @@ Edit Task
 | Rendering result    |          5           | +2.5: Rendering result of get request <br> +2.5: rendering error/success messages for all requests|
 | Data visualization    |          5           | +2.5: Display monthly top tags <br> +2.5: Display weekly top tags|
 | Manual test plan |          5            | 0: No manual test plan <br> +1: per test                                                                    |
-| Unit test|          5           | 0: No unit test <br> +1: per test                                                    |
+| Unit test|          5           | 0: No unit test <br> +0.5: per test                                                    |
 
 ### Week 4
 [Week 4 calculator](https://drive.google.com/file/d/1JZcPs00KbhCpV7-8D5UAcQBealD2sk99/view?usp=sharing)
@@ -148,4 +148,4 @@ Edit Task
 | Additionaly functionality(i.e. daily summary) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
 | Weather API   |           5           | +2: successfully make API request <br> +2: properly render result <br> +1: hide |
 | Manual test plan|          5           | 0: No manual test plan <br> +1: per test                                                   |
-| Unit test|          5           | 0: No unit test <br> +1: per test                                                    |
+| Unit test|          5           | 0: No unit test <br> +0.5: per test                                                    |
