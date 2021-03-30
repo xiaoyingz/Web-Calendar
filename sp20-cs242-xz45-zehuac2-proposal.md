@@ -70,7 +70,7 @@ Edit Task
 
   1. design MongoDB database schema (Z & L)
   2. set up Flask server with APIs(PUT, GET, POST, DELETE) (Z)
-  3. Query parser for querying tasks with the following filters: keywords, created time, task Tag, task status (Z)
+  3. Query parser for querying tasks/daily summary(Z & L)
   4. Server can display desired messages in Postman (Z & L)
   5. Error handling for backend (Z & L)
 
@@ -78,74 +78,120 @@ Edit Task
 
   1. Frontend layer design, with static UI for testing purpose (L)
   2. Implement navigations between pages (L)
-  3. Command line Interface for testing Server API (Z & L)
   4. Manual test for UI design (Z & L)
 
 - Week 3:
 
   1. Design VMC architecture for the project (Z & L)
   2. Bind the frontend and backend, implement controllers for each UI component (Z & L)
-  3. Frontend can visualize daily routines in terms of different kinds of tasks. (L)
 
 - Week 4:
 
-  1. Implement functionalities of daily summary in frontend and backend (Z & L)
-  2. API for Weather forecast(Z & L)
+  1. Additional functionalities (Z & L)
+  2. API for Weather forecast(Z)
   3. Polish the UI design to be more user-friendly(Z & L)
+  4. Frontend can visualize daily routines in terms of different kinds of tasks. (L)
 
 ## Detailed division of labor by week
 
 | Week               | Qirui Lu                            | Xiaoying Zhu                        |
 | :----------: | :---------------------------- | :---------------------------- |
-| Week 1|- Design schema for to-do and daily summary <br> - List required APIs for backend based on primary functionality of frontend design <br> - Check error messages of backend and use of status codes <br> - test APIs using Postman|- Design schema for to-do and daily summary <br> - impelement desired API routes <br> - write exception classes and handle them in server <br> - test APIs using Postman <br> - Unit tests for query parser|
-| Week 2|- Static frontend UI <br> - Navigation bar and buttons for navigation between pages <br> - Manual test plan for UI design |- Command-line interface for thoroughly testing server API (simulate frondend request) <br> - Manual test plan for UI design|
+| Week 1|- Design schema for to-do and daily summary <br> - impelement desired API routes for task <br> - query parser for task <br> - write exception classes and handle them in server <br> - test APIs using Postman <br> - Unit tests | - Design schema for to-do and daily summary <br> - impelement desired API routes for daily summary <br> - query parser for daily summary <br> - write exception classes and handle them in server <br> - test APIs using Postman <br> - Unit tests|
+| Week 2|- Monthly overview design <br> - Weekly overview design <br> - Manual test plan for UI design |- Command-line interface for thoroughly testing server API (simulate frondend request) <br> - Manual test plan for UI design|
 | Week 3|- Design VMC architecture for the project <br> - Responsive UI(search/add task) <br> - Data visualization|- Design VMC architecture for the project <br> - Responsive UI(edit/delete task)|
 | Week 4|- functionality of daily summary(frontend) <br> - API for Weather forecast <br> - Polish the UI design to be more user-friendly(mainly focus on pages related to add/search task)|- functionality of daily summary(backend) <br> - API for Weather forecast <br> - Polish the UI design to be more user-friendly(mainly focus on pages related to add/search task)|
 
 ## Rubrics
 
 ### Week 1
-[Week 1 calculator](https://drive.google.com/file/d/1CshEsQGbAE0xHlaYOFb_QOuW7hO4pyVo/view?usp=sharing)
+
+ Qirui's rubric ([calculator](https://drive.google.com/file/d/1QCMuq6p2tM5wJUk06-6BidM-EwVZbU1d/view?usp=sharing))
 
 | Category        | Total Score Allocated | Detailed Rubrics                                                                               |
 | --------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
 | MongoDB databse |          3            | 0: Didn't implement anything <br> +1: implement proper attributes <br> +1: connect the database <br> +1: use environment variables for security |
-| Flask backend   |          5            | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)               |
-| Query parser    |          5            | 0: Didn't implement anything <br> +1.25: implement each type                                   |
+| Flask backend for task  |          5            | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)               |
+| Query parser    |          5            | 0: Didn't implement anything <br> +1: support logic operator 'NOT' <br> +1.5: support logic operator 'AND' <br> +1.5: support logic operator 'OR' <br> +1: support double quotes(contains vs. exactly match)|
 | Error handling  |          2            | 0: No error handling <br> +1: correct use of status code <br> +1: properly reporting errors    |
-| Manual test plan|          5            | 0: No manual test plan <br> +1: per test                                                       |
+| Manual test plan for Postman|          5            | 0: No manual test plan <br> +1: per test                                                       |
+| Unit Test       |          5            | 0: No unit test <br> +0.5: per unit test                                                     |
+
+ Xiaoying's rubric ([calculator](https://drive.google.com/file/d/1pwzflO5HPLerT7KHtETGnilA5TWMTS3r/view?usp=sharing))
+
+| Category        | Total Score Allocated | Detailed Rubrics                                                                               |
+| --------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
+| MongoDB databse |          3            | 0: Didn't implement anything <br> +1: implement proper attributes <br> +1: connect the database <br> +1: use environment variables for security |
+| Flask backend for daily summary  |          5            | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)               |
+| Query parser    |          5            | 0: Didn't implement anything <br> +1: support logic operator 'NOT' <br> +1.5: support logic operator 'AND' <br> +1.5: support logic operator 'OR' <br> +1: support double quotes(contains vs. exactly match)|
+| Error handling  |          2            | 0: No error handling <br> +1: correct use of status code <br> +1: properly reporting errors    |
+| Manual test plan for Postman|          5            | 0: No manual test plan <br> +1: per test                                                       |
 | Unit Test       |          5            | 0: No unit test <br> +0.5: per unit test                                                     |
 
 ### Week 2
-[Week 2 calculator](https://drive.google.com/file/d/1YmRSdg5GNLXsE7QtrUlCxKqSIpJG56g6/view?usp=sharing)
+
+ Qirui's rubric ([calculator](https://drive.google.com/file/d/1SROfHDijvvUVq2Z0KdZoQ5X4sHGw6g4h/view?usp=sharing))
 
 | Category        | Total Score Allocated | Detailed Rubrics                                                                                               |
 | --------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
-| Overview page design|         3        | 0: Didn't implement anything <br> +1.5: be able to render monthly overview <br> +1.5: be able to render weekly overview |
-| Page navigation |          2           | responsive navigation bar and buttons for navigating                                                            |
-| Daily page      |          5           | 0: Didn't implement anything <br> +1.25: component for adding new task <br> +1.25: component for editing task <br> +1.25: component for deleting task <br> +1.25: component for searching|
-| CLI             |          5            | 0: Didn't implement tests <br> +1.25: per command line related to each API (PUT, POST, GET, DELETE)|
-| Pylint|          5           | +2: 7.5 and above <br> +3: 8.5 and above|
+| Monthly overview design|         5        | 0: Didn't implement anything <br> +3: be able to render a monthly calendar <br> +2: be able to navigate to a certain daily page|
+| Weekly overview design |          5           | 0: Didn't implement anything <br> +3: be able to render a monthly calendar <br> +2: be able to navigate to a certain daily page |
+| Add new task page design      |          5           | 0: Didn't implement anything <br> +2: render textboxes <br> +2: render dropdown component for certain attributes <br> +1: navigate back to daily page|
+| Eslint |          2           | +1: Eslint is properly set <br> +1: No warning|
+| Pylint |          3           | 0: 7.5 below <br> +1: 7.5 and above <br> +2: 8.5 and above|
+| Manual test plan for static UI|          5           | 0: No manual test plan <br> +1: per test |
+
+ Xiaoying's rubric ([calculator](https://drive.google.com/file/d/15sCYny744lYb5ViZGN88eYI84hdG1KhV/view?usp=sharing))
+
+| Category        | Total Score Allocated | Detailed Rubrics                                                                                               |
+| --------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
+| Daily page design|         5        | 0: Didn't implement anything <br> +1: be able to render list component for to-do list <br> +1: be able to render details of selected task <br> +1: render desired buttons  <br> +2: navigate to different pages|
+| Edit task page design |          5           | 0: Didn't implement anything <br> +2: render textboxes <br> +2: render dropdown component for certain attributes <br> +1: navigate back to daily page|
+| Edit daily summary page design |          5           | 0: Didn't implement anything <br> +2: render textboxes <br> +2: render dropdown component for certain attributes <br> +1: navigate back to daily page|
+| Eslint |          2           | +1: Eslint is properly set <br> +1: No warning|
+| Pylint |          3           | 0: 7.5 below <br> +1: 7.5 and above <br> +2: 8.5 and above|
 | Manual test plan for static UI|          5           | 0: No manual test plan <br> +1: per test |
 
 ### Week 3
-[Week 3 calculator](https://drive.google.com/file/d/1zrTETjDaKIPKvX0BeipJML5wxLMkWWj6/view?usp=sharing)
+
+ Qirui's rubric ([calculator](https://drive.google.com/file/d/1G0Oo-qTTCWpfsJF_eJzl9hF6vKk72mOv/view?usp=sharing))
 
 | Category         | Total Score Allocated | Detailed Rubrics                                                                                               |
 | ---------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
-| Making requests |          5           | +1: be able to search task by keyword <br> +1: be able to delete a certain task <br> +1.5 be able to update a certain task <br> +1.5: be able to create a new task|
-| Rendering result    |          5           | +2.5: Rendering result of get request <br> +2.5: rendering error/success messages for all requests|
-| Data visualization    |          5           | +2.5: Display monthly top tags <br> +2.5: Display weekly top tags|
+| make requests for editing task |          5           | 0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
+| make requests for editing daily summary |          5           | 0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
+| render results |          5           | 0: Didn't implement anything <br> +2.5: Render updated data on success <br> +2.5: rendering error/success messages for all requests|
 | Manual test plan |          5            | 0: No manual test plan <br> +1: per test                                                                    |
-| Unit test|          5           | 0: No unit test <br> +0.5: per test                                                    |
+| Eslint|          5           | +2: Eslint is properly set <br> +3: No warning|
+
+ Xiaoying's rubric ([calculator](https://drive.google.com/file/d/1S3rQdSoAJ2CgFqAWXfe8sH2PhU2h-bAL/view?usp=sharing))
+
+| Category         | Total Score Allocated | Detailed Rubrics                                                                                               |
+| ---------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
+| make requests in daily page |          5           |0: Didn't implement anything <br> +1: make request for deleting a certain task <br> +1: make request for searching task by query <br> +1: make request for getting daily summary|
+| make requests for adding new task |          5           |0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
+| render results |          5           | 0: Didn't implement anything <br> +2.5: Render result of GET APIs <br> +2.5: rendering error/success messages for all requests|
+| Manual test plan |          5            | 0: No manual test plan <br> +1: per test                                                                    |
+| Eslint|          5           | +2: Eslint is properly set <br> +3: No warning|
 
 ### Week 4
-[Week 4 calculator](https://drive.google.com/file/d/1JZcPs00KbhCpV7-8D5UAcQBealD2sk99/view?usp=sharing)
+
+Qirui's rubric ([calculator](https://drive.google.com/file/d/1SJvSiSd4S_oY4304snd0r4eKWZZZjG9I/view?usp=sharing))
 
 | Category      | Total Score Allocated | Detailed Rubrics                                                                               |
 | ------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
-| Additionaly functionality(i.e. daily summary) backend|          5           | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)|
-| Additionaly functionality(i.e. daily summary) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
-| Weather API   |           5           | +2: successfully make API request <br> +2: properly render result <br> +1: hide |
+| Additional functionality(i.e. delay today's task) backend|          5           | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)|
+| Additional functionality(i.e. delay today's task) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
+| Additional features for daily page(i.e. daily lucky number generator)|    3       |0: Didn't implement anything <br> +1.5: backend implementation <br> +1.5: frontend rendering|
+| Polish UI style   |           2           | 0: Didn't implement anything <br> +2: Adjust styles for all component|
+| Manual test plan|          5           | 0: No manual test plan <br> +1: per test                                                   |
+| Unit test|          5           | 0: No unit test <br> +0.5: per test                                                    |
+
+Xiaoying's rubric ([calculator](https://drive.google.com/file/d/1ZQtdd5y9L87JQh1LSXMe2YHTj7oY6kvJ/view?usp=sharing))
+
+| Category      | Total Score Allocated | Detailed Rubrics                                                                               |
+| ------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
+| Additionaly functionality(i.e. data visualization) backend|          5           | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)|
+| Additionaly functionality(i.e. data visualization) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
+| Additional features for daily page(i.e. today's weather)|           5           | +3: successfully make API request <br> +2: properly render result|
 | Manual test plan|          5           | 0: No manual test plan <br> +1: per test                                                   |
 | Unit test|          5           | 0: No unit test <br> +0.5: per test                                                    |
