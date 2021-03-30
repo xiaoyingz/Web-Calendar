@@ -97,9 +97,9 @@ Edit Task
 | Week               | Qirui Lu                            | Xiaoying Zhu                        |
 | :----------: | :---------------------------- | :---------------------------- |
 | Week 1|- Design schema for to-do and daily summary <br> - impelement desired API routes for task <br> - query parser for task <br> - write exception classes and handle them in server <br> - test APIs using Postman <br> - Unit tests | - Design schema for to-do and daily summary <br> - impelement desired API routes for daily summary <br> - query parser for daily summary <br> - write exception classes and handle them in server <br> - test APIs using Postman <br> - Unit tests|
-| Week 2|- Monthly overview design <br> - Weekly overview design <br> - Manual test plan for UI design |- Command-line interface for thoroughly testing server API (simulate frondend request) <br> - Manual test plan for UI design|
-| Week 3|- Design VMC architecture for the project <br> - Responsive UI(search/add task) <br> - Data visualization|- Design VMC architecture for the project <br> - Responsive UI(edit/delete task)|
-| Week 4|- functionality of daily summary(frontend) <br> - API for Weather forecast <br> - Polish the UI design to be more user-friendly(mainly focus on pages related to add/search task)|- functionality of daily summary(backend) <br> - API for Weather forecast <br> - Polish the UI design to be more user-friendly(mainly focus on pages related to add/search task)|
+| Week 2|- Monthly overview design <br> - Weekly overview design <br> - Add new task page design <br>- Eslint <br> -Pylint <br> - Manual test plan for UI design |- Daily page design <br> - Edit task page design <br> - Edit daily summary page design <br>- Eslint <br> -Pylint <br> - Manual test plan for UI design |
+| Week 3|- Design VMC architecture for the project <br> - make requests for editing task <br> - make requests for editing daily summary <br> - render results <br> - Manual test plan|- Design VMC architecture for the project <br> - make requests in daily page <br> - make requests for adding new task <br> - render results <br> - Manual test plan|
+| Week 4|- Additional functionality(i.e. delay today's task) backend <br> - Additional functionality(i.e. delay today's task) frontend <br> - Additional features for daily page(i.e. daily lucky number generator) <br> - Polish UI style|- Additional functionality(i.e. data visualization) backend <br> - Additional functionality(i.e. data visualization) frontend <br> - Additional features for daily page(i.e. today's weather)|
 
 ## Rubrics
 
@@ -190,8 +190,8 @@ Xiaoying's rubric ([calculator](https://drive.google.com/file/d/1ZQtdd5y9L87JQh1
 
 | Category      | Total Score Allocated | Detailed Rubrics                                                                               |
 | ------------- | :-------------------: | ---------------------------------------------------------------------------------------------- |
-| Additionaly functionality(i.e. data visualization) backend|          5           | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)|
-| Additionaly functionality(i.e. data visualization) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
+| Additional functionality(i.e. data visualization) backend|          5           | 0: Didn't implement anything <br> +1.25: implement each API(PUT GET POST DELETE)|
+| Additional functionality(i.e. data visualization) frontend|          5           | +2.5: be able to make requests <br> +2.5: be able to render result/messages|
 | Additional features for daily page(i.e. today's weather)|           5           | +3: successfully make API request <br> +2: properly render result|
 | Manual test plan|          5           | 0: No manual test plan <br> +1: per test                                                   |
 | Unit test|          5           | 0: No unit test <br> +0.5: per test                                                    |
