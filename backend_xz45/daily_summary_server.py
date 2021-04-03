@@ -1,14 +1,21 @@
 import requests
 import json
-import daily_summary_database
+import daily_summary_database, daily_summary_schema
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
 NOT_FOUND_MESSAGE = 'No such {} found.'
-INVALID_GET = 'Please specify {}.'
+INVALID_REQUEST = 'Please specify {}.'
+INVALID_ATTRIBUTE = 'Invalid attribute: {}'
+UPDATE_SUCCESS = 'Summary with date {} has been updated.'
+UPDATE_ERROR = 'Summary with date {} cannot be updated.'
+UPLOAD_SUCCESS = 'Summary with date {} has been created.'
+UPLOAD_ERROR = 'Summary with date {} cannot be created.'
+DELETE_SUCCESS = 'Summary with date {} has been deleted.'
 
 @app.route(rule='/summary', methods=['GET'])
 def get_summary_by_id():
@@ -22,7 +29,7 @@ def get_summary_by_id():
         if len(find_result) == 0:
             return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
         return jsonify(find_result), 200
-    return jsonify(INVALID_GET.format('summary id')), 400
+    return jsonify(INVALID_REQUEST.format('summary id')), 400
 
 
 @app.route(rule='/summary', methods=['GET'])
@@ -37,20 +44,52 @@ def get_summary_by_mood():
         if len(find_result) == 0:
             return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
         return jsonify(find_result), 200
-    return jsonify(INVALID_GET.format('mood')), 400
+    return jsonify(INVALID_REQUEST.format('mood')), 400
 
 
-@app.route(rule='/summary', methods=['GET'])
-def get_summary_by_date():
-    """
-    Define route searching for summary by date, i.e. "/summary?date={date to find}"
-    :return: data if id exists, otherwise error message with status code
-    """
-    summary_date = request.args.get('date', None)
-    if summary_date:
-        find_result = daily_summary_database.find_summary_by_date(summary_date)
-        if len(find_result) == 0:
-            return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
-        return jsonify(find_result), 200
-    return jsonify(INVALID_GET.format('date')), 400
+@app.route(rule='/summary', methods=['PUT'])
+def put_summary_by_id():
+    curr_id = request.args.get('id', None)
+    if curr_id:
+        new_data = request.json
+        items = list(new_data.items())
+        for item in items:
+            key, val = item
+            if key not in daily_summary_schema.summary_schema:
+                return jsonify(INVALID_ATTRIBUTE.format(key)), 400
+        update_result = daily_summary_database.update_summary_by_id()
+        if update_result == 0:
+            return jsonify(UPDATE_SUCCESS.format(curr_id)), 201
+        elif update_result == 1:
+            return jsonify(NOT_FOUND_MESSAGE.format('summary'))
+        elif update_result == 2:
+            return jsonify('Update_one encountered errors.'), 400
+        else:
+            return jsonify(UPDATE_ERROR.format(curr_id)), 400
+    return jsonify(INVALID_REQUEST.format('id')), 400
 
+
+@app.route(rule='/summary', methods=['POST'])
+def post_single_summary():
+    new_summary = request.json
+    curr_id = new_summary.get('_id', None)
+    if curr_id:
+        post_result = daily_summary_database.upload_single_summary(new_summary)
+        if post_result == 0:
+            return jsonify(UPLOAD_SUCCESS.format(new_summary.get('_id'))), 201
+        elif post_result == 1:
+            return jsonify(UPDATE_SUCCESS.format(new_summary.get('_id'))), 201
+        elif post_result == 2:
+            return jsonify(UPLOAD_ERROR.format()), 400
+    return jsonify(INVALID_REQUEST.format('_id')), 400
+
+
+@app.route(rule='summary', methods=['DELETE'])
+def delete_summary_by_id():
+    curr_id = request.args.get('id', None)
+    if curr_id:
+        deleted_count = daily_summary_database.delete_by_id(curr_id)
+        if deleted_count == 1:
+            return jsonify(DELETE_SUCCESS.format(curr_id)), 200
+        return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
+    return jsonify(INVALID_REQUEST.format('id')), 400
