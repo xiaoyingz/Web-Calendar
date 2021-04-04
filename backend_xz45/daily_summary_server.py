@@ -16,6 +16,8 @@ UPDATE_ERROR = 'Summary with date {} cannot be updated.'
 UPLOAD_SUCCESS = 'Summary with date {} has been created.'
 UPLOAD_ERROR = 'Summary with date {} cannot be created.'
 DELETE_SUCCESS = 'Summary with date {} has been deleted.'
+INVALID_FORMAT = 'Invalid format of {}.'
+
 
 @app.route(rule='/summary', methods=['GET'])
 def get_summary_by_id():
@@ -55,9 +57,10 @@ def put_summary_by_id():
         items = list(new_data.items())
         for item in items:
             key, val = item
-            if key not in daily_summary_schema.summary_schema:
+            print(key, val)
+            if key not in daily_summary_schema.summary_attr:
                 return jsonify(INVALID_ATTRIBUTE.format(key)), 400
-        update_result = daily_summary_database.update_summary_by_id()
+        update_result = daily_summary_database.update_summary_by_id(curr_id, new_data)
         if update_result == 0:
             return jsonify(UPDATE_SUCCESS.format(curr_id)), 201
         elif update_result == 1:
@@ -76,15 +79,17 @@ def post_single_summary():
     if curr_id:
         post_result = daily_summary_database.upload_single_summary(new_summary)
         if post_result == 0:
-            return jsonify(UPLOAD_SUCCESS.format(new_summary.get('_id'))), 201
+            return jsonify(UPLOAD_SUCCESS.format(curr_id)), 201
         elif post_result == 1:
-            return jsonify(UPDATE_SUCCESS.format(new_summary.get('_id'))), 201
+            return jsonify(UPDATE_SUCCESS.format(curr_id)), 201
         elif post_result == 2:
-            return jsonify(UPLOAD_ERROR.format()), 400
+            return jsonify(UPLOAD_ERROR.format(curr_id)), 400
+        elif post_result == 3:
+            return jsonify(INVALID_FORMAT.format('_id')), 400
     return jsonify(INVALID_REQUEST.format('_id')), 400
 
 
-@app.route(rule='summary', methods=['DELETE'])
+@app.route(rule='/summary', methods=['DELETE'])
 def delete_summary_by_id():
     curr_id = request.args.get('id', None)
     if curr_id:
@@ -93,3 +98,7 @@ def delete_summary_by_id():
             return jsonify(DELETE_SUCCESS.format(curr_id)), 200
         return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
     return jsonify(INVALID_REQUEST.format('id')), 400
+
+
+if __name__ == '__main__':
+    app.run()
