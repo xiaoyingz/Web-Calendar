@@ -1,6 +1,6 @@
 # : used to specify attribute, i.e. content:
-# 'BETWEEN', 'AFTER', 'BEFORE' are filters for date attribute, use $ to specify time range,
-# i.e. date: BETWEEN $2010-12-05 $2021-3-15, date: AFTER $2020-07-10, date: BEFORE $2020-07-03
+# 'BETWEEN', 'AFTER', 'BEFORE' are filters for _id attribute, use $ to specify time range,
+# i.e. _id: BETWEEN $2010-12-05 $2021-3-15, _id: AFTER $2020-07-10, _id: BEFORE $2020-07-03
 # logic operator: AND, OR, NOT
 # "" contains, otherwise exactly match
 # '>', '<' for range of year, month, or day
@@ -20,13 +20,12 @@ INVALID_OP_USE = 'Invalid use of {}.'
 def parser(query):
     query = preprocess_query(query)
     if ':' not in query:
-        return False, 'Query should contain operator ":".'
+        return False, '"Query should contain operator :.'
     attr, rule = query.split(':')
     attr = attr.strip()
     rule = rule.strip()
     if attr not in daily_summary_schema.summary_attr:
         return False, INVALID_ATTRIBUTE.format(attr)
-
     if attr in INT_ATTR:
         if '>' in rule:
             return handle_bounded(attr, rule, op='>')
@@ -137,12 +136,9 @@ def handle_bounded(attr, rule, op='<'):
 
 
 def call_db(mongo_q):
-    # print('call db')
     curr_db = daily_summary_database.connect_db()
-    # print('mongo', mongo_q)
     cursor = curr_db['summary'].find(mongo_q)
     result = daily_summary_database.cursor_to_list(cursor)
-    # print(result)
     return result
 
 
