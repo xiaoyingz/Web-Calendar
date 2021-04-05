@@ -11,7 +11,7 @@ import json
 OP_ESCAPE = ['\:', '\$', '\AND', '\OR', r'\NOT', '\BEFORE', '\AFTER', '\BETWEEN', r'\"', '\<', '\>']
 OP_MASK = ['C_O_L', 'D_O_L', 'A_N_D', 'O_R', 'N_O_T', 'B_E_F', 'A_F_T', 'B_E_T', 'Q_U_O_T_E', 'L_T', 'G_T']
 INT_ATTR = ['year', 'month', 'day']
-MONGO_OP_MAP = {'<': '$lt', '>': '$gt'}
+MONGO_OP_MAP = {'<': '$lt', '>': '$gt', 'AND': '$and', 'OR': '$or', 'NOT': '$not'}
 
 INVALID_ATTRIBUTE = 'Invalid attribute {}.'
 INVALID_OP_USE = 'Invalid use of {}.'
@@ -40,6 +40,14 @@ def parser(query):
                 return True, result
             except ValueError:
                 return False, 'Invalid filter type {}.'.format(rule)
+    else:
+        if 'AND' in rule:
+
+        elif 'OR' in rule:
+
+        elif 'NOT' in rule:
+
+        else:
 
 
 # def final_q(str_q):
@@ -48,6 +56,28 @@ def parser(query):
 #         key, val = item
 #         str_q = str_q.replace(key, val)
 #     return str_q
+
+
+def handle_logic(attr, rule, op):
+    split_rule = rule.split(op)
+    if op == 'NOT':
+        if split_rule[0].strip != '':
+            return False, INVALID_OP_USE.format(op)
+
+    else:
+        rule1 = split_rule[0].strip()
+        rule2 = split_rule[2].strip()
+        if rule1 == '' or rule2 == '':
+            return False, INVALID_OP_USE.format(op)
+
+
+def exact_or_contain(rule):
+    if '"' not in rule:
+        return 1
+    if rule[0] == '"' and rule[-1] == '"':
+        if len(rule) >= 2 and '"' not in rule[1:-1]:
+            return 2
+    return 3
 
 
 def handle_bounded(attr, rule, op='<'):

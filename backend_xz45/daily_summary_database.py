@@ -93,9 +93,7 @@ def create_date(new_summary):
     try:
         id_to_date = datetime.datetime.strptime(new_summary['_id']+'T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.000Z')
         new_summary['_id'] = str(id_to_date.date())
-        # print(type(id_to_date))
         new_summary['date'] = id_to_date
-        print(id_to_date)
         return 0
     except ValueError:
         return 1
