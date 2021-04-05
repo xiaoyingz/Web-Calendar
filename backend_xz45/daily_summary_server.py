@@ -1,6 +1,6 @@
 import requests
 import json
-import daily_summary_database, daily_summary_schema
+import daily_summary_database, daily_summary_schema, summary_query_parser
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 app = Flask(__name__)
@@ -47,6 +47,23 @@ def get_summary_by_mood():
             return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
         return jsonify(find_result), 200
     return jsonify(INVALID_REQUEST.format('mood')), 400
+
+
+@app.route(rule='/summary/search', methods=['GET'])
+def get_summary_by_query():
+    """
+    Define route searching for summary by query, i.e. "/summary/search?query={query to find}"
+    :return: data if query is satisfied, otherwise error message with status code
+    """
+    query = request.args.get('query', None)
+    if query:
+        status, result = summary_query_parser.parser(query)
+        if status is True:
+            if len(result) == 0:
+                return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
+            return jsonify(result), 200
+        return jsonify(result), 400
+    return jsonify(INVALID_REQUEST.format('query')), 400
 
 
 @app.route(rule='/summary', methods=['PUT'])
