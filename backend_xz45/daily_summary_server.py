@@ -1,5 +1,3 @@
-import requests
-import json
 import daily_summary_database, daily_summary_schema, summary_query_parser
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
@@ -68,6 +66,11 @@ def get_summary_by_query():
 
 @app.route(rule='/summary', methods=['PUT'])
 def put_summary_by_id():
+    """
+    Define route of updating data by id, i.e. "/summary?id={id to update}", new data is stored
+    in request.json
+    :return: message and status code
+    """
     curr_id = request.args.get('id', None)
     if curr_id:
         new_data = request.json
@@ -90,6 +93,11 @@ def put_summary_by_id():
 
 @app.route(rule='/summary', methods=['POST'])
 def post_single_summary():
+    """
+    Define route of uploading a single piece of data, i.e. "/summary", new data is stored
+    in request.json
+    :return: message and status code
+    """
     new_summary = request.json
     curr_id = new_summary.get('_id', None)
     if curr_id:
@@ -107,6 +115,10 @@ def post_single_summary():
 
 @app.route(rule='/summary', methods=['DELETE'])
 def delete_summary_by_id():
+    """
+    Define route for deleting summary by id, i.e. "/summary/id?id={id to delete}"
+    :return: message and status code
+    """
     curr_id = request.args.get('id', None)
     if curr_id:
         deleted_count = daily_summary_database.delete_by_id(curr_id)

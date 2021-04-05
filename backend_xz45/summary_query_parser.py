@@ -18,6 +18,11 @@ INVALID_ATTRIBUTE = 'Invalid attribute {}.'
 INVALID_OP_USE = 'Invalid use of {}.'
 
 def parser(query):
+    """
+    Parse and execute query for daily summary collection
+    :param query: given query
+    :return: True and query result if query is valid, False and error message otherwise
+    """
     query = preprocess_query(query)
     if ':' not in query:
         return False, '"Query should contain operator :.'
@@ -33,7 +38,6 @@ def parser(query):
             return handle_bounded(attr, rule, op='<')
         else:
             try:
-                print(rule)
                 value = int(rule)
                 q = {attr: value}
                 result = call_db(q)
@@ -62,6 +66,13 @@ def parser(query):
 
 
 def handle_logic(attr, rule, op='AND'):
+    """
+    Helper to parse logic operators
+    :param attr: query's target attribute
+    :param rule: query's rule
+    :param op: given logic operator(AND, OR, NOT)
+    :return: True and query result if rule is valid, False and error message otherwise
+    """
     split_rule = rule.split(op)
     if op == 'NOT':
         if split_rule[0].strip() != '':
@@ -87,6 +98,14 @@ def handle_logic(attr, rule, op='AND'):
 
 
 def execute_and_or(attr, rule1, rule2, op='AND'):
+    """
+    Helper to build and execute rules engaged in 'AND', 'OR'
+    :param attr: target attribute of rule
+    :param rule1: rule before given operator
+    :param rule2: rule after given operator
+    :param op: 'AND', 'OR'
+    :return: True and query result if both rules are valid, False and error message otherwise
+    """
     match_code1 = exact_or_contain(rule1)
     match_code2 = exact_or_contain(rule2)
     if match_code1 == 3 or match_code2 == 3:
@@ -109,11 +128,21 @@ def execute_and_or(attr, rule1, rule2, op='AND'):
 
 
 def build_regex(rule):
+    """
+    Helper to generate part of the query that is related to 'contains' operator
+    :param rule: substring result should contain
+    :return: json represents meaning of 'contains'
+    """
     expr = re.compile(f".*{rule[1:-1]}.*", re.I)
     return {'$regex': expr}
 
 
 def exact_or_contain(rule):
+    """
+    Helper to check if the result should contain or exactly match the given substring
+    :param rule: given substring
+    :return: 1: exactly match, 2: contains, 3: invalid use of double quotes
+    """
     if '"' not in rule:
         return 1
     if rule[0] == '"' and rule[-1] == '"':
@@ -123,6 +152,13 @@ def exact_or_contain(rule):
 
 
 def handle_bounded(attr, rule, op='<'):
+    """
+    Helper to parse and execute query related to bounded operators
+    :param attr: target attribute of query
+    :param rule: rule of query
+    :param op: '<', '>'
+    :return: True and query result if rule is valid, False and error message otherwise
+    """
     split_rule = rule.split(op)
     if split_rule[0].strip() != '':
         return False, INVALID_OP_USE.format(op)
@@ -136,6 +172,11 @@ def handle_bounded(attr, rule, op='<'):
 
 
 def call_db(mongo_q):
+    """
+    Helper to call database to execute query
+    :param mongo_q: MongDB query
+    :return: list of json storing querying result
+    """
     curr_db = daily_summary_database.connect_db()
     cursor = curr_db['summary'].find(mongo_q)
     result = daily_summary_database.cursor_to_list(cursor)
@@ -143,12 +184,22 @@ def call_db(mongo_q):
 
 
 def preprocess_query(query):
+    """
+    Detect escapes of special operators in query and cover them with masks
+    :param query: query to be preprocessed
+    :return: preprocessed query
+    """
     for i in range(0, len(OP_ESCAPE)):
         query = query.replace(OP_ESCAPE[i], OP_MASK[i])
     return query
 
 
 def revert_rule(rule):
+    """
+    Uncover masked special operators in the given rule
+    :param rule: rule to be uncovered
+    :return: uncovered rule
+    """
     for i in range(0, len(OP_ESCAPE)):
         rule = rule.replace(OP_MASK[i], OP_ESCAPE[i][1:])
     return rule
