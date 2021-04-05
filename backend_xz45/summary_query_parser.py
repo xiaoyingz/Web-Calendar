@@ -5,8 +5,9 @@
 # "" contains, otherwise exactly match
 # '>', '<' for range of year, month, or day
 # use escape '\' to prevent operators above to be parsed by parser
+# Unbounded, logic, and time range operator will only appear once in a query
 import daily_summary_schema, daily_summary_database
-import json
+import re
 
 OP_ESCAPE = ['\:', '\$', '\AND', '\OR', r'\NOT', '\BEFORE', '\AFTER', '\BETWEEN', r'\"', '\<', '\>']
 OP_MASK = ['C_O_L', 'D_O_L', 'A_N_D', 'O_R', 'N_O_T', 'B_E_F', 'A_F_T', 'B_E_T', 'Q_U_O_T_E', 'L_T', 'G_T']
@@ -42,33 +43,75 @@ def parser(query):
                 return False, 'Invalid filter type {}.'.format(rule)
     else:
         if 'AND' in rule:
-
+            return handle_logic(attr, rule, op='AND')
         elif 'OR' in rule:
-
+            return handle_logic(attr, rule, op='OR')
         elif 'NOT' in rule:
-
+            return handle_logic(attr, rule, op='NOT')
         else:
+            match_code = exact_or_contain(rule)
+            if match_code == 3:
+                return False, INVALID_OP_USE.format('""')
+            curr_q = {}
+            if match_code == 1:
+                curr_q = {attr: rule}
+            elif match_code == 2:
+                regex = build_regex(rule)
+                curr_q = {attr: regex}
+            result = call_db(curr_q)
+            return True, result
 
 
-# def final_q(str_q):
-#     items = CURL_MAP.items()
-#     for item in items:
-#         key, val = item
-#         str_q = str_q.replace(key, val)
-#     return str_q
-
-
-def handle_logic(attr, rule, op):
+def handle_logic(attr, rule, op='AND'):
     split_rule = rule.split(op)
     if op == 'NOT':
-        if split_rule[0].strip != '':
+        if split_rule[0].strip() != '':
             return False, INVALID_OP_USE.format(op)
-
+        rule1 = split_rule[1].strip()
+        match_code = exact_or_contain(rule1)
+        if match_code == 1:
+            mongo_q = {attr: {'$ne': rule1}}
+            result = call_db(mongo_q)
+            return True, result
+        elif match_code == 2:
+            regex = build_regex(rule1)
+            mongo_q = {attr: {'$not': regex}}
+            result = call_db(mongo_q)
+            return True, result
+        return False, INVALID_OP_USE.format('""')
     else:
         rule1 = split_rule[0].strip()
-        rule2 = split_rule[2].strip()
+        rule2 = split_rule[1].strip()
         if rule1 == '' or rule2 == '':
             return False, INVALID_OP_USE.format(op)
+        return execute_and_or(attr, rule1, rule2, op=op)
+
+
+def execute_and_or(attr, rule1, rule2, op='AND'):
+    match_code1 = exact_or_contain(rule1)
+    match_code2 = exact_or_contain(rule2)
+    if match_code1 == 3 or match_code2 == 3:
+        return False, INVALID_OP_USE.format(op)
+
+    if match_code1 == 1:
+        cond1 = {attr: rule1}
+    else:
+        regex = build_regex(rule1)
+        cond1 = {attr: regex}
+
+    if match_code2 == 1:
+        cond2 = {attr: rule2}
+    else:
+        regex = build_regex(rule2)
+        cond2 = {attr: regex}
+    mongo_q = {MONGO_OP_MAP[op]: [cond1, cond2]}
+    result = call_db(mongo_q)
+    return True, result
+
+
+def build_regex(rule):
+    expr = re.compile(f".*{rule[1:-1]}.*", re.I)
+    return {'$regex': expr}
 
 
 def exact_or_contain(rule):
@@ -96,7 +139,6 @@ def handle_bounded(attr, rule, op='<'):
 def call_db(mongo_q):
     # print('call db')
     curr_db = daily_summary_database.connect_db()
-    # mongo_q = json.dumps(str_query)
     # print('mongo', mongo_q)
     cursor = curr_db['summary'].find(mongo_q)
     result = daily_summary_database.cursor_to_list(cursor)
