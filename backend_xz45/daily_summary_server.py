@@ -19,10 +19,10 @@ DELETE_SUCCESS = 'Summary with date {} has been deleted.'
 INVALID_FORMAT = 'Invalid format of {}.'
 
 
-@app.route(rule='/summary', methods=['GET'])
+@app.route(rule='/summary/id', methods=['GET'])
 def get_summary_by_id():
     """
-    Define route searching for summary by id, i.e. "/summary?id={id to find}"
+    Define route searching for summary by id, i.e. "/summary/id?id={id to find}"
     :return: data if id exists, otherwise error message with status code
     """
     summary_id = request.args.get('id', None)
@@ -34,15 +34,15 @@ def get_summary_by_id():
     return jsonify(INVALID_REQUEST.format('summary id')), 400
 
 
-@app.route(rule='/summary', methods=['GET'])
+@app.route(rule='/summary/mood', methods=['GET'])
 def get_summary_by_mood():
     """
-    Define route searching for summary by mood, i.e. "/summary?mood={mood to find}"
+    Define route searching for summary by mood, i.e. "/summary/mood?mood={mood to find}"
     :return: data if id exists, otherwise error message with status code
     """
     summary_mood = request.args.get('mood', None)
     if summary_mood:
-        find_result = daily_summary_database.find_summary_by_id(summary_mood)
+        find_result = daily_summary_database.find_summary_by_mood(mood=summary_mood)
         if len(find_result) == 0:
             return jsonify(NOT_FOUND_MESSAGE.format('summary')), 400
         return jsonify(find_result), 200
@@ -57,7 +57,6 @@ def put_summary_by_id():
         items = list(new_data.items())
         for item in items:
             key, val = item
-            print(key, val)
             if key not in daily_summary_schema.summary_attr:
                 return jsonify(INVALID_ATTRIBUTE.format(key)), 400
         update_result = daily_summary_database.update_summary_by_id(curr_id, new_data)

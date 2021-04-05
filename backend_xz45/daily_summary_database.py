@@ -5,6 +5,7 @@ from collections import OrderedDict
 import pymongo
 from pymongo import MongoClient
 import daily_summary_schema
+import datetime
 
 
 KEYS = ['year', 'month', 'day']
@@ -34,7 +35,8 @@ def find_summary_by_id(curr_id, collection_name='summary'):
 def find_summary_by_mood(mood, collection_name='summary'):
     curr_db = connect_db()
     cursor = curr_db[collection_name].find({'mood': mood})
-    return cursor_to_list(cursor)
+    result = cursor_to_list(cursor)
+    return result
 
 
 def update_summary_by_id(curr_id, new_data):
@@ -62,6 +64,7 @@ def upload_single_summary(new_summary):
     curr_db = connect_db()
     summary_id = new_summary.get('_id')
     year_month_day = summary_id.split('-')
+
     for i in range(0, len(KEYS)):
         try:
             int_val = int(year_month_day[i])
@@ -70,6 +73,12 @@ def upload_single_summary(new_summary):
             new_summary[KEYS[i]] = int_val
         except ValueError:
             return 3
+
+    if create_date(new_summary) == 1:
+        return 3
+
+    summary_id = new_summary['_id']
+
     try:
         result = curr_db['summary'].replace_one(filter={'_id': summary_id},
                                                 replacement=new_summary, upsert=True)
@@ -78,6 +87,18 @@ def upload_single_summary(new_summary):
         return 1
     except pymongo.errors.WriteError:
         return 2
+
+
+def create_date(new_summary):
+    try:
+        id_to_date = datetime.datetime.strptime(new_summary['_id']+'T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.000Z')
+        new_summary['_id'] = str(id_to_date.date())
+        # print(type(id_to_date))
+        new_summary['date'] = id_to_date
+        print(id_to_date)
+        return 0
+    except ValueError:
+        return 1
 
 
 def check_day_range(y, m, d):

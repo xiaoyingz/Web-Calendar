@@ -1,6 +1,7 @@
 summary_attr = ['_id',
                 'content',
                 'mood',
+                'date',
                 'year',
                 'month',
                 'day']
@@ -12,6 +13,9 @@ summary_schema = [
             'bsonType': 'object',
             'required': summary_attr,
             'properties': {
+                'date': {
+                    'bsonType': 'date'
+                },
                 'year': {
                     'bsonType': 'int'
                 },
