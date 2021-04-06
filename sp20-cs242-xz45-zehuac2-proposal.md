@@ -147,8 +147,7 @@ Edit Task
 | Daily page design|         5        | 0: Didn't implement anything <br> +1: be able to render list component for to-do list <br> +1: be able to render details of selected task <br> +1: render desired buttons  <br> +2: navigate to different pages|
 | Edit task page design |          5           | 0: Didn't implement anything <br> +2: render textboxes <br> +2: render dropdown component for certain attributes <br> +1: navigate back to daily page|
 | Edit daily summary page design |          5           | 0: Didn't implement anything <br> +2: render textboxes <br> +2: render dropdown component for certain attributes <br> +1: navigate back to daily page|
-| Eslint |          2           | +1: Eslint is properly set <br> +1: No warning|
-| Pylint |          3           | 0: 7.5 below <br> +1: 7.5 and above <br> +2: 8.5 and above|
+| Unit Test       |          5            | 0: No unit test <br> +0.5: per unit test|
 | Manual test plan for static UI|          5           | 0: No manual test plan <br> +1: per test |
 
 ### Week 3
