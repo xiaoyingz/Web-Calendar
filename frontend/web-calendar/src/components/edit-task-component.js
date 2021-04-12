@@ -1,26 +1,15 @@
 import React, { Component } from 'react';
 import Dropdown from "react-bootstrap/Dropdown";
 import { DropdownButton } from "react-bootstrap";
-import { withRouter } from "react-router-dom";
+
 const testTask = {
     _id: 3,
     title: 'game',
     description: 'monster hunter',
     type: 'life',
-    isFinished: true,
+    isFinished: false,
     isDelay: false
 };
-
-// const idx_map = {
-//     'angry': 0,
-//     'sad': 1,
-//     'happy': 2,
-//     'good': 3
-// }
-//
-// const options = [
-//   'angry', 'sad', 'happy', 'good'
-// ];
 
 const idx_map = {
     'life': 0,
