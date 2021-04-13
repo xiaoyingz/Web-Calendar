@@ -116,7 +116,7 @@ def check_time_format(time):
     """
     try:
         date_obj = datetime.datetime.strptime(time, '%Y-%m-%d')
-        return True, str(date_obj)
+        return True, str(date_obj.date())
     except ValueError:
         return False, "Malformed time."
 
