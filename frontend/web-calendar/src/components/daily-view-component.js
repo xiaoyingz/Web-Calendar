@@ -47,9 +47,15 @@ const SUMMARY = {
         'I get up, or I get up. I then decided to go outside, but because it was raining, I got wet.',
     mood: 'sad'
 }
-
+/**
+ * Component for rendering daily view, which contains that day's to-do list and summary
+ */
 export default class DailyView extends Component {
-
+    /**
+     * Represents a daily view
+     * @constructor
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
 
@@ -72,6 +78,9 @@ export default class DailyView extends Component {
         });
     }
 
+    /**
+     * Render DailyView component
+     */
     render() {
         const currentTask = this.state.currentTask;
         const date = this.props.match.params.date;

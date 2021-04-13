@@ -25,7 +25,16 @@ const options = [
     'angry', 'sad', 'happy', 'good'
 ];
 
+/**
+ * Component for displaying information of a day's summary, and
+ * fields allowing user to update the summary.
+ */
 export default class EditSummary extends Component {
+
+    /**
+     * Represents an EditSummary component
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
 
@@ -41,12 +50,21 @@ export default class EditSummary extends Component {
         };
     }
 
+    /**
+     * Get information of current summary immediately
+     * this component is mounted
+     */
     componentDidMount() {
         this.setState({
             currentSummary: currentSummary
         });
     }
 
+    /**
+     * Track user's input in the box for content, and store 
+     * the content in component's state.
+     * @param {string} e - user's input
+     */
     onChangeContent(e) {
         const content = e.target.value;
         this.setState(prevState => ({
@@ -57,6 +75,11 @@ export default class EditSummary extends Component {
         }));
     }
 
+    /**
+     * Track user's choice in the dropdown, and store the choice 
+     * in component's state
+     * @param {string} eventKey - user's choice for summary's mood
+     */
     onChangeMood(eventKey) {
         this.setState(prevState => ({
             currentSummary: {
@@ -66,6 +89,9 @@ export default class EditSummary extends Component {
         }));
     }
 
+    /**
+     * Render EditSummary component.
+     */
     render() {
         const currentSummary = this.state.currentSummary;
         const optionsCopy = JSON.parse(JSON.stringify(options));

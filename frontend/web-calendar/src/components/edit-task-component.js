@@ -22,7 +22,16 @@ const options = [
     'life', 'work', 'study', 'other'
 ];
 
+/**
+ * Component for displaying information of a task, and 
+ * input box and buttons for user to update this task.
+ */
 export default class EditTask extends Component {
+
+    /**
+     * Represents an EditTask component.
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
 
@@ -42,12 +51,21 @@ export default class EditTask extends Component {
         };
     }
 
+    /**
+     * Get information of current task immediately after
+     * this component is mounted.
+     */
     componentDidMount() {
         this.setState({
             currentTask: testTask
         })
     }
 
+    /**
+     * Track user's input in the box for title, and store 
+     * the title in component's state.
+     * @param {string} e 
+     */
     onChangeTitle(e) {
         const title = e.target.value;
         this.setState(prevState => ({
@@ -58,6 +76,11 @@ export default class EditTask extends Component {
         }));
     }
 
+    /**
+     * Track user's input in the box for description, and store 
+     * the description in component's state.
+     * @param {string} e 
+     */
     onChangeDescription(e) {
         const description = e.target.value;
         this.setState(prevState => ({
@@ -68,6 +91,11 @@ export default class EditTask extends Component {
         }));
     }
 
+    /**
+     * Track user's choice in the dropdown, and store the choice 
+     * in component's state
+     * @param {string} eventKey 
+     */
     onChangeType(eventKey) {
         this.setState(prevState => ({
             currentTask: {
@@ -76,7 +104,10 @@ export default class EditTask extends Component {
             }
         }));
     }
-
+    
+    /**
+     * Render EditTask component.
+     */
     render() {
         const currentTask = this.state.currentTask;
         const optionsCopy = JSON.parse(JSON.stringify(options));

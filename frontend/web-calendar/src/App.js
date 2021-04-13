@@ -6,6 +6,9 @@ import DailyView from "./components/daily-view-component";
 import EditTask from "./components/edit-task-component";
 import EditSummary from "./components/edit-summary-component";
 
+/**
+ * Class to render the main page for this project.
+ */
 class App extends Component {
     render() {
         return (
