@@ -18,6 +18,10 @@ MONGO_OP_MAP = {'<': '$lt', '>': '$gt', 'AND': '$and', 'OR': '$or', 'BEFORE': '$
 INVALID_ATTRIBUTE = 'Invalid attribute {}.'
 INVALID_OP_USE = 'Invalid use of {}.'
 
+MATCH = 1
+CONTAIN = 2
+INVALID_QUOTE = 3
+
 def parser(query):
     """
     Parse and execute query for daily summary collection
@@ -67,12 +71,12 @@ def parser(query):
             return handle_logic(attr, rule, op='NOT')
         else:
             match_code = exact_or_contain(rule)
-            if match_code == 3:
+            if match_code == INVALID_QUOTE:
                 return False, INVALID_OP_USE.format('""')
             curr_q = {}
-            if match_code == 1:
+            if match_code == MATCH:
                 curr_q = {attr: rule}
-            elif match_code == 2:
+            elif match_code == CONTAIN:
                 regex = build_regex(rule)
                 curr_q = {attr: regex}
             result = call_db(curr_q)
@@ -200,11 +204,11 @@ def exact_or_contain(rule):
     :return: 1: exactly match, 2: contains, 3: invalid use of double quotes
     """
     if '"' not in rule:
-        return 1
+        return MATCH
     if rule[0] == '"' and rule[-1] == '"':
         if len(rule) >= 2 and '"' not in rule[1:-1]:
-            return 2
-    return 3
+            return CONTAIN
+    return INVALID_QUOTE
 
 
 def handle_bounded(attr, rule, op='<'):
