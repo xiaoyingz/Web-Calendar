@@ -8,14 +8,19 @@
 # Unbounded, logic, and time range operator will only appear once in a query
 import daily_summary_schema, daily_summary_database
 import re
+import datetime
 
 OP_ESCAPE = ['\:', '\$', '\AND', '\OR', r'\NOT', '\BEFORE', '\AFTER', '\BETWEEN', r'\"', '\<', '\>']
 OP_MASK = ['C_O_L', 'D_O_L', 'A_N_D', 'O_R', 'N_O_T', 'B_E_F', 'A_F_T', 'B_E_T', 'Q_U_O_T_E', 'L_T', 'G_T']
 INT_ATTR = ['year', 'month', 'day']
-MONGO_OP_MAP = {'<': '$lt', '>': '$gt', 'AND': '$and', 'OR': '$or', 'NOT': '$not'}
+MONGO_OP_MAP = {'<': '$lt', '>': '$gt', 'AND': '$and', 'OR': '$or', 'BEFORE': '$lt', 'AFTER': '$gt'}
 
 INVALID_ATTRIBUTE = 'Invalid attribute {}.'
 INVALID_OP_USE = 'Invalid use of {}.'
+
+MATCH = 1
+CONTAIN = 2
+INVALID_QUOTE = 3
 
 def parser(query):
     """
@@ -44,6 +49,19 @@ def parser(query):
                 return True, result
             except ValueError:
                 return False, 'Invalid filter type {}.'.format(rule)
+    elif attr == '_id':
+        if 'BETWEEN' in rule:
+            b, result = handle_time(attr, rule, op='BETWEEN')
+        elif 'AFTER' in rule:
+            b, result = handle_time(attr, rule, op='AFTER')
+        elif 'BEFORE' in rule:
+            b, result = handle_time(attr, rule, op='BEFORE')
+        else:
+            return False, INVALID_OP_USE.format('time filter')
+        if b is True:
+            result = call_db(result)
+            return b, result
+        return b, result
     else:
         if 'AND' in rule:
             return handle_logic(attr, rule, op='AND')
@@ -53,16 +71,58 @@ def parser(query):
             return handle_logic(attr, rule, op='NOT')
         else:
             match_code = exact_or_contain(rule)
-            if match_code == 3:
+            if match_code == INVALID_QUOTE:
                 return False, INVALID_OP_USE.format('""')
             curr_q = {}
-            if match_code == 1:
+            if match_code == MATCH:
                 curr_q = {attr: rule}
-            elif match_code == 2:
+            elif match_code == CONTAIN:
                 regex = build_regex(rule)
                 curr_q = {attr: regex}
             result = call_db(curr_q)
             return True, result
+
+
+def handle_time(attr, rule, op=None):
+    """
+    Helper to handle with time filter operations
+    :param attr: query's target attribute
+    :param rule: query's rule
+    :param op: BETWEEN, BEFORE, AFTER
+    :return: False and error message if rule is invalid, otherwise return
+            True and corresponding mongodb query
+    """
+    parsed_rule = rule.split('$')
+    if op == 'BETWEEN':
+        if len(parsed_rule) != 3:
+            return False, INVALID_OP_USE.format(op)
+        _, begin, end = parsed_rule
+        begin_checked = check_time_format(begin.strip())
+        end_checked = check_time_format(end.strip())
+        if begin_checked[0] is True and end_checked[0] is True:
+            return True, {"$and":[{attr: {"$gt": begin_checked[1]}}, {"_id": {"$lt": end_checked[1]}}]}
+    else:
+        if len(parsed_rule) != 2:
+            return False, INVALID_OP_USE.format(op)
+        time = parsed_rule[1].strip()
+        time_checked = check_time_format(time)
+        if time_checked[0] is True:
+            return True, {attr: {MONGO_OP_MAP[op]: time}}
+    return False, 'Malformed _id.'
+
+
+def check_time_format(time):
+    """
+    Helper to check if given string is in format of "YY-MM-DD"
+    :param time: string to be checked
+    :return: False and error message if invalid, otherwise return
+            True and "YY-MM-DD"
+    """
+    try:
+        date_obj = datetime.datetime.strptime(time, '%Y-%m-%d')
+        return True, str(date_obj.date())
+    except ValueError:
+        return False, "Malformed time."
 
 
 def handle_logic(attr, rule, op='AND'):
@@ -144,11 +204,11 @@ def exact_or_contain(rule):
     :return: 1: exactly match, 2: contains, 3: invalid use of double quotes
     """
     if '"' not in rule:
-        return 1
+        return MATCH
     if rule[0] == '"' and rule[-1] == '"':
         if len(rule) >= 2 and '"' not in rule[1:-1]:
-            return 2
-    return 3
+            return CONTAIN
+    return INVALID_QUOTE
 
 
 def handle_bounded(attr, rule, op='<'):
