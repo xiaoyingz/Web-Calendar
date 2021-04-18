@@ -157,9 +157,9 @@ Edit Task
 
 | Category         | Total Score Allocated | Detailed Rubrics                                                                                               |
 | ---------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
-| make requests for editing task |          5           | 0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
-| make requests for editing daily summary |          5           | 0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
-| render results |          5           | 0: Didn't implement anything <br> +2.5: Render updated data on success <br> +2.5: rendering error/success messages for all requests|
+| make desired requests in monthly overview |          5           | 0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
+| make desired requests in weekly overview |          5           | 0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
+| render results |          5           | 0: Didn't implement anything <br> +2.5: Render information for each grid in monthly and weekly calendar <br> +2.5: Properly render message for blank grids|
 | Manual test plan |          5            | 0: No manual test plan <br> +1: per test                                                                    |
 | Eslint|          5           | +2: Eslint is properly set <br> +3: No warning|
 
@@ -168,8 +168,8 @@ Edit Task
 | Category         | Total Score Allocated | Detailed Rubrics                                                                                               |
 | ---------------- | :-------------------: | -------------------------------------------------------------------------------------------------------------- |
 | make requests in daily page |          5           |0: Didn't implement anything <br> +1: make request for deleting a certain task <br> +1: make request for searching task by query <br> +1: make request for getting daily summary|
-| make requests for adding new task |          5           |0: Didn't implement anything <br> +2.5: Properly pre-process user's inputs <br> +2.5: Send corresponding request to backend through buttons|
-| render results |          5           | 0: Didn't implement anything <br> +2.5: Render result of GET APIs <br> +2.5: rendering error/success messages for all requests|
+| make requests for adding and editing new task |          5           |0: Didn't implement anything <br> +2.5: Implement functionnality for adding a task <br> +2.5: Implement functionnality for editing a task|
+| make request for editing summary |          5           | 0: Didn't implement anything <br> +2.5: Implement functionnality for editing summary <br> +2.5: render updated summary on success|
 | Manual test plan |          5            | 0: No manual test plan <br> +1: per test                                                                    |
 | Eslint|          5           | +2: Eslint is properly set <br> +3: No warning|
 
