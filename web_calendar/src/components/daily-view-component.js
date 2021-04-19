@@ -5,48 +5,10 @@ import happyImg from '../images/happy.png';
 import angryImg from '../images/angry.png';
 import goodImg from '../images/good.png';
 
-const TODOS = [
-{
-    _id: 0,
-    title: 'abc',
-    description: 'abcd',
-    type: 'life',
-    isFinished: false,
-    isDelay: false
-},
-{
-    _id: 1,
-    title: 'def',
-    description: 'defg',
-    type: 'life',
-    isFinished: true,
-    isDelay: false
-},
-{
-    _id: 2,
-    title: 'hhhh',
-    description: 'iiiii',
-    type: 'work',
-    isFinished: true,
-    isDelay: false
-},
-{
-    _id: 3,
-    title: 'game',
-    description: 'monster hunter',
-    type: 'life',
-    isFinished: false,
-    isDelay: false
-}
-]
+import TaskService from '../services/task-service';
+import SummaryService from '../services/summary-service';
 
-const SUMMARY = {
-    _id: '2021-04-14',
-    content: 'After I woke up this morning, I made the regrettable decision of waking up. ' +
-        'I tried to go back to sleep, but I could not even relax. Today was one of those days where either ' +
-        'I get up, or I get up. I then decided to go outside, but because it was raining, I got wet.',
-    mood: 'sad'
-}
+
 /**
  * Component for rendering daily view, which contains that day's to-do list and summary
  */
@@ -60,11 +22,76 @@ export default class DailyView extends Component {
         super(props);
 
         this.setCurrentTask = this.setCurrentTask.bind(this);
+        this.getDate = this.getDate.bind(this);
+        this.retrieveTasks = this.retrieveTasks.bind(this);
+        this.retrieveSummary = this.retrieveSummary.bind(this);
 
         this.state = {
             currentTask: null,
-            currentIdx: ''
+            currentIdx: '',
+            tasks: [],
+            summary: {
+                id: '',
+                content: "init",
+                mood: '',
+                year: 0,
+                month: 0,
+                day: 0,
+                date: ''
+            },
+            date: 'init',
+            taskMessage: '',
+            summaryMessage: ''
         }
+    }
+
+    componentDidMount() {
+        const date = this.getDate();
+        this.setState({
+            date: date
+        })
+        console.log('this'+date);
+        this.retrieveSummary(date);
+        this.retrieveTasks(date);
+        console.log(this.state.summary)
+    }
+
+    async retrieveTasks(date) {
+        try {
+            let response = await TaskService.findTodayTask(date);
+            let tasks = await response.data;
+            console.log(tasks);
+            this.setState({
+                tasks: tasks
+            })
+        } catch(err) {
+            console.log(err);
+            this.setState({
+                taskMessage: 'Click add to create a new task.'
+            })
+        }
+    }
+
+    async retrieveSummary(date) {
+        try {
+            let response = await SummaryService.findTodaySummary(date);
+            this.setState({
+                summary: response.data
+            })
+            console.log(this.state.summary);
+        } catch(err) {
+            this.setState({
+                summaryMessage: "Click edit to write today's summary"
+            })
+            console.log(err);
+        }
+    }
+
+    getDate() {
+        var date = this.props.match.params.date;
+        const today = new Date().toISOString().slice(0, 10);
+        date = (date === '') ? String(today) : date;
+        return date;
     }
 
     /**
@@ -83,30 +110,32 @@ export default class DailyView extends Component {
      */
     render() {
         const currentTask = this.state.currentTask;
-        const date = this.props.match.params.date;
-        const today = new Date().toISOString().slice(0, 10);
-        const moodPath = (SUMMARY.mood === '') ? null : 'frontend/web-calendar/src/images/sad.png';
-        console.log(moodPath);
+        const summary = this.state.summary;
+        const tasks = this.state.tasks;
+        console.log('render')
+        console.log(summary)
+        console.log(summary.content)
         return (
-            <div>
+            <div className='list row'>
                 <div style={{marginBottom: '1rem'}}>
-                    <h3>{date === undefined ? String(today) : date}</h3>
+                    <h3>{this.state.date}</h3>
                 </div>
                 <div className='list row'>
                     <div className='col-md-6' style={{marginBottom: '2rem'}}>
                         <div>
                             <h4>To-do List</h4>
                             <Link
-                                to={'/task/add'}
+                                to={'/addTask'}
                                 className='badge badge-info mr-2'
                             >
                                 Add
                             </Link>
                         </div>
-                        <div>
+                        {this.state.taskMessage === '' ? (
+                            <div>
                             <ul className='list-group'>
-                                {TODOS &&
-                                TODOS.map((task) => (
+                                {tasks &&
+                                tasks.map((task) => (
                                     <li
                                         className={
                                             'list-group-item ' +
@@ -121,6 +150,12 @@ export default class DailyView extends Component {
                                 ))}
                             </ul>
                         </div>
+                        ):(
+                            <div>
+                                {this.state.taskMessage}
+                            </div>
+                        )}
+                        
                     </div>
                     <div className='col-md-6'>
                         {currentTask ? (
@@ -170,22 +205,31 @@ export default class DailyView extends Component {
                     <div className='col-md-6'>
                         <div>
                             <div className='list row'>
-                                <div className='col-md-6'>
+                                <div>
                                     <h4>Today's Summary</h4>
                                 </div>
                                 <div className='col-md-6'>
-                                    <img src={EMO_MAP[SUMMARY.mood]}
-                                         alt='mood of summary'
-                                         className='photo'
-                                         style={styles["image_style"]}
+                                    {summary.mood && 
+                                    <div>
+                                        <img src={EMO_MAP[summary.mood]}
+                                        alt='mood of summary'
+                                        className='photo'
+                                        style={styles["image_style"]}
                                     />
+                                    </div>}
                                 </div>
                             </div>
-                            <div>
-                                {SUMMARY.content}
+                            {this.state.summaryMessage === '' ? (
+                                <div>
+                                {summary.content}
                             </div>
+                            ):(
+                                <div>
+                                    {this.state.summaryMessage}
+                                </div>
+                            )}
                             <Link
-                                to={'/summary/' + SUMMARY._id}
+                                to={'/summary/' + summary._id}
                                 className='badge badge-warning'
                             >
                                 Edit
