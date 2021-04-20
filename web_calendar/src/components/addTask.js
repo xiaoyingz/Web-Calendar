@@ -1,15 +1,29 @@
 import React, { Component } from "react";
-// import TutorialDataService from "../services/tutorial.service";
+import TaskService from "../services/task-service";
+import Dropdown from "react-bootstrap/Dropdown";
+import { DropdownButton } from "react-bootstrap";
 
 //new packages
-import Dropdown from 'react-dropdown';
+// import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 import Datepicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
+import { isThisISOWeek } from "date-fns";
 
-const taskTypes = [
-  'work', 'life', 'others'
+// const taskTypes = [
+//   'work', 'life', 'study', 'other'
+// ];
+
+const idx_map = {
+    'life': 0,
+    'work': 1,
+    'study': 2,
+    'other': 3
+}
+
+const options = [
+    'life', 'work', 'study', 'other'
 ];
 
 /**
@@ -23,16 +37,17 @@ class AddTask extends Component {
     this.saveTask = this.saveTask.bind(this);
     this.newTask = this.newTask.bind(this);
     this.onChangeDate = this.onChangeDate.bind(this);
+    this.onChangeType = this.onChangeType.bind(this);
 
     this.state = {
-      id: null,
-      title: "",
-      description: "", 
-      published: false,
-
-      selectedDate: new Date(),
-
-      submitted: false
+        _id: null,
+        title: "",
+        description: "",
+        selectedDate: new Date(),
+        type: "work",
+        finish: 0,
+        delay: 0,
+        message: ''
     };
   }
 
@@ -66,30 +81,39 @@ class AddTask extends Component {
     });
   }
 
+  onChangeType(eventKey) {
+    this.setState({
+        type: eventKey
+      });
+  }
+
   /**
    * save the new task data
    */
-  saveTask() {
-    var data = {
-      title: this.state.title,
-      description: this.state.description
-    };
-
-    // TutorialDataService.create(data)
-    //   .then(response => {
-    //     this.setState({
-    //       id: response.data.id,
-    //       title: response.data.title,
-    //       description: response.data.description,
-    //       published: response.data.published,
-
-    //       submitted: true
-    //     });
-    //     console.log(response.data);
-    //   })
-    //   .catch(e => {
-    //     console.log(e);
-    //   });
+  async saveTask() {
+    const date = this.state.selectedDate.toISOString().slice(0, 10);
+    console.log(String(date));
+    const data = {
+            _id: this.state._id,
+            date: String(date),
+            title: this.state.title,
+            description: this.state.description,
+            type: this.state.type,
+            finish: this.state.finish,
+            delay: this.state.delay
+        };
+        console.log(data);
+        try {
+            let response = await TaskService.postTask(data);
+            this.setState({
+                message: response.data
+            });
+        } catch(err) {
+            console.log(err);
+            this.setState({
+                message: "Failed to add task."
+            });
+    }
   }
 
   /**
@@ -97,24 +121,28 @@ class AddTask extends Component {
    */
   newTask() {
     this.setState({
-      id: null,
-      title: "",
-      description: "",
-      published: false,
-      selectedDate: null,
-      submitted: false
+        _id: null,
+        title: "",
+        description: "",
+        selectedDate: new Date(),
+        type: "work",
+        finish: 0,
+        delay: 0,
+        message: ''
     });
   }
 
   render() {
+    const optionsCopy = JSON.parse(JSON.stringify(options));
+    optionsCopy.splice(idx_map[this.state.type], 1);
     return (
       <div className="submit-form">
-        {this.state.submitted ? (
+        {this.state.message ? (
           //submit successfully
           <div>
-            <h4>You submitted successfully!</h4>
-            <button className="btn btn-success" onClick={this.newTask}>
-              Add
+            <h4>{this.state.message}</h4>
+            <button className="btn btn-outline-danger" onClick={this.newTask}>
+              Back to add
             </button>
           </div>
         ) : (
@@ -159,15 +187,30 @@ class AddTask extends Component {
 
             <div className="form-group">
               <label htmlFor="title">Type</label>
-              <Dropdown options={taskTypes} 
-                onChange={this._onSelect} 
-                value={taskTypes[0]} 
-                placeholder="Select an option" />
-              
+              <DropdownButton 
+                    id="dropdown-item-button"
+                    title={this.state.type}
+                    variant="outline-secondary"
+                    onSelect={this.onChangeType}
+                >
+                    <Dropdown.Item eventKey={optionsCopy[0]}>
+                        {optionsCopy[0]}
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey={optionsCopy[1]}>
+                        {optionsCopy[1]}
+                    </Dropdown.Item>
+                    <Dropdown.Item eventKey={optionsCopy[2]}>
+                        {optionsCopy[2]}
+                    </Dropdown.Item>
+                </DropdownButton>
+
             </div>
 
-            <button onClick={this.saveTask} className="btn btn-success">
+            <button onClick={this.saveTask} className="btn btn-success mr-2">
               Submit
+            </button>
+            <button onClick={this.props.history.goBack} className='btn btn-outline-danger mr-2'>
+                Back
             </button>
           </div>
         )}
