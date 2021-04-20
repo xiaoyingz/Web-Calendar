@@ -5,14 +5,7 @@ import sadImg from '../images/sad.png';
 import happyImg from '../images/happy.png';
 import angryImg from '../images/angry.png';
 import goodImg from '../images/good.png';
-
-const currentSummary = {
-    _id: '2021-04-14',
-    content: 'After I woke up this morning, I made the regrettable decision of waking up. ' +
-        'I tried to go back to sleep, but I could not even relax. Today was one of those days where either ' +
-        'I get up, or I get up. I then decided to go outside, but because it was raining, I got wet.',
-    mood: 'sad'
-}
+import SummaryService from '../services/summary-service';
 
 const idx_map = {
     'angry': 0,
@@ -40,12 +33,16 @@ export default class EditSummary extends Component {
 
         this.onChangeContent = this.onChangeContent.bind(this);
         this.onChangeMood = this.onChangeMood.bind(this);
+        this.retrieveCurrentSummary = this.retrieveCurrentSummary.bind(this);
+        this.onClickUpdate = this.onClickUpdate.bind(this);
+        this.initSummary = this.initSummary.bind(this);
 
         this.state = {
+            message: '',
             currentSummary: {
                 _id: '',
                 content: '',
-                mood: ''
+                mood: 'happy'
             }
         };
     }
@@ -55,9 +52,31 @@ export default class EditSummary extends Component {
      * this component is mounted
      */
     componentDidMount() {
-        this.setState({
-            currentSummary: currentSummary
-        });
+        this.retrieveCurrentSummary();
+    }
+
+    /**
+     * Get today's summary and store it in the state
+     */
+    async retrieveCurrentSummary() {
+        const date = this.props.match.params.id;
+        try {
+            let response = await SummaryService.findTodaySummary(date);
+            this.setState({
+                currentSummary: response.data
+            })
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    async initSummary(data) {
+        try{
+            let response = await SummaryService.createSummary(data);
+            console.log(response.data);
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     /**
@@ -68,8 +87,8 @@ export default class EditSummary extends Component {
     onChangeContent(e) {
         const content = e.target.value;
         this.setState(prevState => ({
-            currentTask: {
-                ...prevState.currentTask,
+            currentSummary: {
+                ...prevState.currentSummary,
                 content: content
             }
         }));
@@ -89,6 +108,24 @@ export default class EditSummary extends Component {
         }));
     }
 
+    async onClickUpdate() {
+        try {
+            const data = {
+                content: this.state.currentSummary.content,
+                mood: this.state.currentSummary.mood
+            }
+            let response = await SummaryService.editSummary(this.props.match.params.id, data);
+            this.setState({
+                message: response.data
+            });
+        } catch(err) {
+            console.log(err.response.data);
+            this.setState({
+                message: err.response.data
+            })
+        }
+    }
+
     /**
      * Render EditSummary component.
      */
@@ -101,7 +138,7 @@ export default class EditSummary extends Component {
                 {currentSummary ? (
                     <div className='edit-form'>
                         <div className='list row'>
-                            <div className='col-md-2'>
+                            <div>
                                 <h4>Summary</h4>
                             </div>
                             <div className='col-md-6'>
@@ -115,6 +152,11 @@ export default class EditSummary extends Component {
                         <h5
                             style={{color: "darkgray"}}
                         >{currentSummary._id}</h5>
+                        {this.state.message && 
+                            <div style={{color: 'darkred'}}>
+                                {this.state.message}
+                            </div>
+                        }
                         <form>
                             <div className="form-group">
                                 <label htmlFor="mood">Mood</label>
@@ -148,14 +190,13 @@ export default class EditSummary extends Component {
 
                         </form>
                         <div>
-                            <button className='btn btn-info mr-2'>
-                                Submit
+                            <button onClick={this.onClickUpdate} className='btn btn-info mr-2'>
+                                Update
                             </button>
                             <button onClick={this.props.history.goBack} className='btn btn-outline-danger mr-2'>
                                 Back
                             </button>
                         </div>
-
                     </div>
                 ):(
                     <div>

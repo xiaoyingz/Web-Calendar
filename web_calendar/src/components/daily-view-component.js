@@ -50,10 +50,8 @@ export default class DailyView extends Component {
         this.setState({
             date: date
         })
-        console.log('this'+date);
         this.retrieveSummary(date);
         this.retrieveTasks(date);
-        console.log(this.state.summary)
     }
 
     async retrieveTasks(date) {
@@ -112,9 +110,6 @@ export default class DailyView extends Component {
         const currentTask = this.state.currentTask;
         const summary = this.state.summary;
         const tasks = this.state.tasks;
-        console.log('render')
-        console.log(summary)
-        console.log(summary.content)
         return (
             <div className='list row'>
                 <div style={{marginBottom: '1rem'}}>
@@ -141,7 +136,7 @@ export default class DailyView extends Component {
                                             'list-group-item ' +
                                             (task._id === this.state.currentIdx ? 'active' : '')
                                         }
-                                        style={task.isFinished ? {color: "gray"} : {color: "black"}}
+                                        style={task.finish === 1 ? {color: "gray"} : {color: "black"}}
                                         onClick={() => this.setCurrentTask(task)}
                                         key={task._id}
                                     >
@@ -155,7 +150,6 @@ export default class DailyView extends Component {
                                 {this.state.taskMessage}
                             </div>
                         )}
-                        
                     </div>
                     <div className='col-md-6'>
                         {currentTask ? (
@@ -180,10 +174,10 @@ export default class DailyView extends Component {
                                     {currentTask.type}
                                 </div>
                                 <div
-                                    style={currentTask.isFinished ? {color: "darkgreen"}:{color: "darkred"}}
+                                    style={currentTask.finish === 1 ? {color: "darkgreen"}:{color: "darkred"}}
                                 >
                                     <label>
-                                        <strong>{currentTask.isFinished ? 'Finished' : 'Unfinished'}</strong>
+                                        <strong>{currentTask.finish === 1 ? 'Finished' : 'Unfinished'}</strong>
                                     </label>
                                 </div>
                                 <Link

@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import Dropdown from "react-bootstrap/Dropdown";
 import { DropdownButton } from "react-bootstrap";
-
-const testTask = {
-    _id: 3,
-    title: 'game',
-    description: 'monster hunter',
-    type: 'life',
-    isFinished: false,
-    isDelay: false
-};
+import TaskService from "../services/task-service";
 
 const idx_map = {
     'life': 0,
@@ -38,6 +30,9 @@ export default class EditTask extends Component {
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangeType = this.onChangeType.bind(this);
+        this.retrieveCurrentTask = this.retrieveCurrentTask.bind(this);
+        this.onClickMark = this.onClickMark.bind(this);
+        this.updateTask = this.updateTask.bind(this);
 
         this.state = {
             currentTask: {
@@ -45,9 +40,10 @@ export default class EditTask extends Component {
                 title: '',
                 description: '',
                 type: '',
-                isFinished: false,
-                isDelay: false
-            }
+                finish: 0,
+                delay: 0
+            },
+            message: ''
         };
     }
 
@@ -56,9 +52,19 @@ export default class EditTask extends Component {
      * this component is mounted.
      */
     componentDidMount() {
-        this.setState({
-            currentTask: testTask
-        })
+        this.retrieveCurrentTask();
+    }
+
+
+    async retrieveCurrentTask() {
+        try {
+            let response = await TaskService.findTaskById(this.props.match.params.id);
+            this.setState({
+                currentTask: response.data
+            })
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     /**
@@ -104,7 +110,29 @@ export default class EditTask extends Component {
             }
         }));
     }
-    
+
+    onClickMark(status) {
+        const data = {
+            finish: status
+        }
+        this.updateTask(data);
+    }
+
+    async updateTask(data) {
+        try {
+            let response = await TaskService.putTaskById(this.props.match.params.id, data);
+            this.setState({
+                message: response.data
+            });
+            this.retrieveCurrentTask();
+        } catch(err) {
+            console.log(err);
+            this.setState({
+                message: 'Failed to update task.'
+            })
+        }
+    }
+
     /**
      * Render EditTask component.
      */
@@ -117,6 +145,11 @@ export default class EditTask extends Component {
                 {currentTask ? (
                     <div className='edit-form'>
                         <h4>Task</h4>
+                        {this.state.message &&
+                            <div style={{color: 'darkred'}}>
+                                {this.state.message}
+                            </div>
+                        }
                         <form>
                             <div className="form-group">
                                 <label htmlFor="title">Title</label>
@@ -141,9 +174,9 @@ export default class EditTask extends Component {
                             <div>
                                 <label
                                     htmlFor="isFinished"
-                                    style={currentTask.isFinished ? {color: 'darkgreen'} : {color: "darkred"}}
+                                    style={currentTask.finish === 1 ? {color: 'darkgreen'} : {color: "darkred"}}
                                 >
-                                    <strong>{currentTask.isFinished ? 'Finished':'Unfinished'}</strong>
+                                    <strong>{currentTask.finish === 1 ? 'Finished':'Unfinished'}</strong>
                                 </label>
                             </div>
                             <div className="form-group">
@@ -166,11 +199,14 @@ export default class EditTask extends Component {
                             </div>
                         </form>
                         <div>
-                            <button className='btn btn-success mr-2'>
+                            <button onClick={()=>this.updateTask(this.state.currentTask)} className='btn btn-info mr-2'>
                                 Update
                             </button>
-                            <button className='btn btn-outline-primary mr-2'>
-                                {'Mark as '.concat((currentTask.isFinished) ? 'Unfinished':'finished')}
+                            <button className='btn btn-danger mr-2'>
+                                Delete
+                            </button>
+                            <button onClick={()=>this.onClickMark(Math.abs(this.state.currentTask.finish - 1))} className='btn btn-outline-secondary mr-2'>
+                                {'Mark as '.concat((currentTask.finish === 1) ? 'Unfinished':'finished')}
                             </button>
                             <button onClick={this.props.history.goBack} className='btn btn-outline-danger mr-2'>
                                 Back
