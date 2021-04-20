@@ -81,7 +81,7 @@ export default class DailyView extends Component {
             console.log(this.state.summary);
         } catch(err) {
             this.setState({
-                summaryMessage: "Click edit to write today's summary"
+                summaryMessage: "Click new to write today's summary"
             })
             console.log(err);
         }
@@ -90,7 +90,7 @@ export default class DailyView extends Component {
     getDate() {
         var date = this.props.match.params.date;
         const today = new Date().toISOString().slice(0, 10);
-        date = (date === '') ? String(today) : date;
+        date = (date === undefined) ? String(today) : date;
         return date;
     }
 
@@ -203,38 +203,47 @@ export default class DailyView extends Component {
                 </div>
                 <div className='list row'>
                     <div className='col-md-6'>
-                        <div>
-                            <div className='list row'>
-                                <div>
-                                    <h4>Today's Summary</h4>
-                                </div>
-                                <div className='col-md-6'>
-                                    {summary.mood && 
+                        <div className='list row'>
+                            <div>
+                                <h4>Today's Summary</h4>
+                            </div>
+                            <div className='col-md-3'>
+                                {summary.mood && 
                                     <div>
                                         <img src={EMO_MAP[summary.mood]}
-                                        alt='mood of summary'
-                                        className='photo'
-                                        style={styles["image_style"]}
-                                    />
-                                    </div>}
-                                </div>
+                                            alt='mood of summary'
+                                            className='photo'
+                                            style={styles["image_style"]}
+                                        />
+                                    </div>
+                                }
                             </div>
-                            {this.state.summaryMessage === '' ? (
-                                <div>
-                                {summary.content}
-                            </div>
-                            ):(
-                                <div>
-                                    {this.state.summaryMessage}
-                                </div>
-                            )}
-                            <Link
-                                to={'/summary/' + summary._id}
-                                className='badge badge-warning'
-                            >
-                                Edit
-                            </Link>
                         </div>
+                        {this.state.summaryMessage === '' ? (
+                            <div>
+                                {summary.content}
+                                <div>
+                                <Link
+                                    to={'/summary/' + this.state.date}
+                                    className='badge badge-warning'
+                                >
+                                    Edit
+                                </Link>
+                                </div>
+                            </div>
+                        ):(
+                            <div>
+                                {this.state.summaryMessage}
+                                <div>
+                                <Link
+                                    to={'/addSummary/' + this.state.date}
+                                    className='badge badge-info'
+                                >
+                                    New
+                                </Link>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
