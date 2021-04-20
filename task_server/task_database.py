@@ -1,7 +1,10 @@
+from collections import OrderedDict
 import pymongo
 from pymongo import MongoClient
 from task_schema import task_schema
-from collections import OrderedDict
+from task_parser import search
+import ast
+import datetime
 
 
 def connect_db():
@@ -12,7 +15,8 @@ def connect_db():
     """
 
     cluster = MongoClient(
-        "mongodb+srv://xz45:971215@cluster0.b5ke5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+        "mongodb+srv://xz45:971215@cluster" +
+        "0.b5ke5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     )
     curr_db = cluster["project"]
     return curr_db
@@ -46,7 +50,7 @@ def cursor_to_list(cursor):
 def find_task_by_date(curr_date, delay=0):
     """
     Get the tasks according to the date attribute and delay attribute.
-    :param curr_date: the date we want to get  
+    :param curr_date: the date we want to get
 
     :param delay: whether we need to specify the delay, default to 0.
     This attribute is for the delay function on week 4.
@@ -72,7 +76,7 @@ def find_task_by_date(curr_date, delay=0):
 def find_task_by_date_title(curr_date, curr_title):
     """
     Get one specific task according to the date and title.
-    :param curr_date: the date we want to get  
+    :param curr_date: the date we want to get
 
     :param curr_title: the title we want to get
 
@@ -88,7 +92,7 @@ def find_task_by_date_title(curr_date, curr_title):
 def update_task_by_id(curr_id, attr, attr_value):
     """
     Update a task for one specific attribute.
-    :param curr_id: the task id we want to update  
+    :param curr_id: the task id we want to update
 
     :param attr: the attr to be updated
 
@@ -124,7 +128,7 @@ def update_task_by_id(curr_id, attr, attr_value):
 def delete_by_id(curr_id):
     """
     Delete a task according to the id.
-    :param curr_id: the task id we want to update  
+    :param curr_id: the task id we want to update
 
     :param attr: the attr to be updated
 
@@ -148,7 +152,7 @@ def delete_by_id(curr_id):
 def create_task(new_task):
     """
     Create a new task.
-    :param new_task: a dictionary contains all 
+    :param new_task: a dictionary contains all
     the information about the new task
 
     :return: 0 if success, otherwise return a positive integers
@@ -167,3 +171,60 @@ def create_task(new_task):
         return 0
     except:
         return 1
+
+
+def find_number_of_tasks_by_date(curr_date):
+    try:
+        curr_db = connect_db()
+        print('connect to databse')
+    except:
+        print('fail to connect the databse')
+        return None
+    collection = curr_db["task"]
+    result = collection.find({"date": curr_date})
+    return result.count()
+
+
+def find_tasks_by_day_range(start_date, end_date):
+    try:
+        curr_db = connect_db()
+        print('connect to databse')
+    except:
+        print('fail to connect the databse')
+        return None
+    collection = curr_db["task"]
+    query = {"$and": [{"date": {"$gte": start_date}},
+                      {"date": {"$lte": end_date}}]}
+    result = collection.find(query)
+    return cursor_to_list(result)
+
+
+def iter_dates(date1, date2):
+    start = datetime.datetime.strptime(date1, '%Y-%m-%d')
+    end = datetime.datetime.strptime(date2, '%Y-%m-%d')
+    step = datetime.timedelta(days=1)
+    result = []
+    while start <= end:
+        result.append(str(start.date()))
+        start += step
+
+    return result
+
+
+def find_monthly_tasks_counts(start_date, end_date):
+    data = find_tasks_by_day_range(start_date, end_date)
+    dates = iter_dates(start_date, end_date)
+    result = {}
+    for date in dates:
+        count = 0
+        for task in data:
+            if task['date'] == date:
+                count += 1
+        result[date] = (count)
+    print(result)
+    return result
+
+
+if __name__ == '__main__':
+
+    find_monthly_tasks_counts("2021-04-01", "2021-04-30")

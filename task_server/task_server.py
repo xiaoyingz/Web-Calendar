@@ -1,5 +1,4 @@
-from flask import Flask, request, render_template, jsonify
-from flask_restful import Api, Resource, reqparse
+from flask import Flask, request, jsonify
 import task_database
 
 NOT_FOUND_MESSAGE = 'No such {} found.'
@@ -14,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = "Secret Key"
 
 
-@app.route('/task', methods=['GET'])
+@app.route('/task/date', methods=['GET'])
 def get_task_by_date():
     """
     Define route searching for task by date, i.e. "/task?date=2021-03-15&delay=1" or 
@@ -36,8 +35,52 @@ def get_task_by_date():
     find_result = task_database.find_task_by_date(task_date, task_delay)
 
     if find_result:
-        return jsonify(find_result), 200
+        response = jsonify(find_result)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 200
     return jsonify(NOT_FOUND_MESSAGE.format('task')), 400
+
+
+@app.route('/task/monthlyTasks', methods=['GET'])
+def get_monthly_tasks():
+    """
+    Define route searching for task by date, i.e. "/task?date=2021-03-15&delay=1" or 
+    "/task?date=2021-03-15", the delay arguement is for the delay functionality on week 4.
+    :return: data if id exists, otherwise error message with status code
+    """
+    try:
+        start_date = request.args['start']
+        end_date = request.args['end']
+    except:
+        response = jsonify(INVALID_REQUEST.format('task'))
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 400
+
+    find_result = task_database.find_monthly_tasks_counts(start_date, end_date)
+    response = jsonify(find_result)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response, 200
+
+
+@app.route('/task/weeklyTasks', methods=['GET'])
+def get_weekly_tasks():
+    """
+    Define route searching for task by date, i.e. "/task?date=2021-03-15&delay=1" or 
+    "/task?date=2021-03-15", the delay arguement is for the delay functionality on week 4.
+    :return: data if id exists, otherwise error message with status code
+    """
+    try:
+        start_date = request.args['start']
+        end_date = request.args['end']
+    except:
+        response = jsonify(INVALID_REQUEST.format('task'))
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 400
+
+    find_result = task_database.find_tasks_by_day_range(start_date, end_date)
+    response = jsonify(find_result)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response, 200
 
 
 @app.route('/task', methods=['POST'])
