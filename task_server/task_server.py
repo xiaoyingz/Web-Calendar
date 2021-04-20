@@ -44,9 +44,10 @@ def get_task_by_date():
 @app.route('/task/monthlyTasks', methods=['GET'])
 def get_monthly_tasks():
     """
-    Define route searching for task by date, i.e. "/task?date=2021-03-15&delay=1" or 
-    "/task?date=2021-03-15", the delay arguement is for the delay functionality on week 4.
-    :return: data if id exists, otherwise error message with status code
+    Define route searching for number of tasks by a range of days.
+    i.e. "/task/monthlyTasks?start=2021-04-01&end=2021-04-30".
+
+    :return: a list of numbers, otherwise error message with status code
     """
     try:
         start_date = request.args['start']
@@ -65,9 +66,10 @@ def get_monthly_tasks():
 @app.route('/task/weeklyTasks', methods=['GET'])
 def get_weekly_tasks():
     """
-    Define route searching for task by date, i.e. "/task?date=2021-03-15&delay=1" or 
-    "/task?date=2021-03-15", the delay arguement is for the delay functionality on week 4.
-    :return: data if id exists, otherwise error message with status code
+    Define route searching for tasks by a range of days in a week.
+    i.e. "/task/weeklyTasks?start=2021-04-01&end=2021-04-30".
+
+    :return: a list of tasks, otherwise error message with status code
     """
     try:
         start_date = request.args['start']

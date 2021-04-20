@@ -174,6 +174,13 @@ def create_task(new_task):
 
 
 def find_number_of_tasks_by_date(curr_date):
+    """
+    Find the number of tasks for curr_date
+    :param curr_date: the desired day
+
+    :return: the number of tasks
+
+    """
     try:
         curr_db = connect_db()
         print('connect to databse')
@@ -186,6 +193,14 @@ def find_number_of_tasks_by_date(curr_date):
 
 
 def find_tasks_by_day_range(start_date, end_date):
+    """
+    Find all the tasks in a time range
+    :param start_date: the start date(inslusive)
+
+    :param end_date: the end date(inslusive)
+
+    :return: a list of tasks
+    """
     try:
         curr_db = connect_db()
         print('connect to databse')
@@ -200,6 +215,16 @@ def find_tasks_by_day_range(start_date, end_date):
 
 
 def iter_dates(date1, date2):
+    """
+    Generate all the dates between date1 and date2
+    in a list of format "yyyy-MM-dd"
+
+    :param date1: the start date(inslusive)
+
+    :param date2: the end date(inslusive)
+
+    :return: a list of date
+    """
     start = datetime.datetime.strptime(date1, '%Y-%m-%d')
     end = datetime.datetime.strptime(date2, '%Y-%m-%d')
     step = datetime.timedelta(days=1)
@@ -212,6 +237,14 @@ def iter_dates(date1, date2):
 
 
 def find_monthly_tasks_counts(start_date, end_date):
+    """
+    Find the number of tasks for each day in a range of days
+    :param start_date: the start date(inslusive)
+
+    :param end_date: the end date(inslusive)
+
+    :return: a list of numbers
+    """
     data = find_tasks_by_day_range(start_date, end_date)
     dates = iter_dates(start_date, end_date)
     result = {}
