@@ -4,16 +4,10 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { DropdownButton } from "react-bootstrap";
 
 //new packages
-// import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 
 import Datepicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
-import { isThisISOWeek } from "date-fns";
-
-// const taskTypes = [
-//   'work', 'life', 'study', 'other'
-// ];
 
 const idx_map = {
     'life': 0,
@@ -94,7 +88,7 @@ class AddTask extends Component {
     const date = this.state.selectedDate.toISOString().slice(0, 10);
     console.log(String(date));
     const data = {
-            _id: this.state._id,
+            _id: null,
             date: String(date),
             title: this.state.title,
             description: this.state.description,

@@ -16,6 +16,10 @@ class TaskService {
     postTask(data) {
         return http.post(`/task`, data);
     }
+
+    deleteTaskById(id) {
+        return http.delete(`/task?id=${id}`);
+    }
 }
 
 export default new TaskService();

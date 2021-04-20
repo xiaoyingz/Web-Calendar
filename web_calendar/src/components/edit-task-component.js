@@ -202,9 +202,6 @@ export default class EditTask extends Component {
                             <button onClick={()=>this.updateTask(this.state.currentTask)} className='btn btn-info mr-2'>
                                 Update
                             </button>
-                            <button className='btn btn-danger mr-2'>
-                                Delete
-                            </button>
                             <button onClick={()=>this.onClickMark(Math.abs(this.state.currentTask.finish - 1))} className='btn btn-outline-secondary mr-2'>
                                 {'Mark as '.concat((currentTask.finish === 1) ? 'Unfinished':'finished')}
                             </button>

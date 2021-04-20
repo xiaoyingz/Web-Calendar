@@ -8,7 +8,6 @@ import goodImg from '../images/good.png';
 import TaskService from '../services/task-service';
 import SummaryService from '../services/summary-service';
 
-
 /**
  * Component for rendering daily view, which contains that day's to-do list and summary
  */
@@ -25,6 +24,7 @@ export default class DailyView extends Component {
         this.getDate = this.getDate.bind(this);
         this.retrieveTasks = this.retrieveTasks.bind(this);
         this.retrieveSummary = this.retrieveSummary.bind(this);
+        this.onClickDelete = this.onClickDelete.bind(this);
 
         this.state = {
             currentTask: null,
@@ -41,7 +41,8 @@ export default class DailyView extends Component {
             },
             date: 'init',
             taskMessage: '',
-            summaryMessage: ''
+            summaryMessage: '',
+            deleteMessage: ''
         }
     }
 
@@ -103,6 +104,23 @@ export default class DailyView extends Component {
         });
     }
 
+    async onClickDelete() {
+        try {
+            let response = await TaskService.deleteTaskById(this.state.currentIdx);
+            this.setState({
+                deleteMessage: response.data,
+                currentIdx: '',
+                currentTask: null
+            })
+            this.retrieveTasks(this.state.date);
+        } catch(err) {
+            console.log(err);
+            this.setState({
+                deleteMessage: "Failed to delete this task."
+            })
+        }
+    }
+
     /**
      * Render DailyView component
      */
@@ -119,6 +137,11 @@ export default class DailyView extends Component {
                     <div className='col-md-6' style={{marginBottom: '2rem'}}>
                         <div>
                             <h4>To-do List</h4>
+                            {this.state.deleteMessage &&
+                                <div style={{color: 'darkred'}}>
+                                    {this.state.deleteMessage}
+                                </div>
+                            }
                             <Link
                                 to={'/addTask'}
                                 className='badge badge-info mr-2'
@@ -182,10 +205,13 @@ export default class DailyView extends Component {
                                 </div>
                                 <Link
                                     to={'/task/' + currentTask._id}
-                                    className='badge badge-warning'
+                                    className='badge badge-warning mr-2'
                                 >
                                     Edit
                                 </Link>
+                                <button onClick={this.onClickDelete} className='badge btn-danger mr-2'>
+                                    Delete
+                                </button>
                             </div>
                         ) : (
                             <div>
