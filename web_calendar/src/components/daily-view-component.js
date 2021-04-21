@@ -8,6 +8,22 @@ import goodImg from '../images/good.png';
 import TaskService from '../services/task-service';
 import SummaryService from '../services/summary-service';
 
+const EMO_MAP = {
+    sad: sadImg,
+    angry: angryImg,
+    good: goodImg,
+    happy: happyImg,
+};
+
+const styles = {
+    image_style: {
+        flex: 1,
+        height: '30px',
+        width: '30px',
+        justifyContent: 'left',
+    },
+};
+
 /**
  * Component for rendering daily view, which contains that day's to-do list and summary
  */
@@ -15,7 +31,7 @@ export default class DailyView extends Component {
     /**
      * Represents a daily view
      * @constructor
-     * @param {*} props 
+     * @param {*} props
      */
     constructor(props) {
         super(props);
@@ -32,64 +48,52 @@ export default class DailyView extends Component {
             tasks: [],
             summary: {
                 id: '',
-                content: "init",
+                content: 'init',
                 mood: '',
                 year: 0,
                 month: 0,
                 day: 0,
-                date: ''
+                date: '',
             },
             date: 'init',
             taskMessage: '',
             summaryMessage: '',
-            deleteMessage: ''
-        }
+            deleteMessage: '',
+        };
     }
 
     componentDidMount() {
         const date = this.getDate();
         this.setState({
-            date: date
-        })
+            date,
+        });
         this.retrieveSummary(date);
         this.retrieveTasks(date);
     }
 
-    async retrieveTasks(date) {
+    async onClickDelete() {
         try {
-            let response = await TaskService.findTodayTask(date);
-            let tasks = await response.data;
-            console.log(tasks);
+            const { currentIdx, date } = this.state;
+            const response = await TaskService.deleteTaskById(currentIdx);
             this.setState({
-                tasks: tasks
-            })
-        } catch(err) {
+                deleteMessage: response.data,
+                currentIdx: '',
+                currentTask: null,
+            });
+            this.retrieveTasks(date);
+        } catch (err) {
             console.log(err);
             this.setState({
-                taskMessage: 'Click add to create a new task.'
-            })
-        }
-    }
-
-    async retrieveSummary(date) {
-        try {
-            let response = await SummaryService.findTodaySummary(date);
-            this.setState({
-                summary: response.data
-            })
-            console.log(this.state.summary);
-        } catch(err) {
-            this.setState({
-                summaryMessage: "Click new to write today's summary"
-            })
-            console.log(err);
+                deleteMessage: 'Failed to delete this task.',
+            });
         }
     }
 
     getDate() {
-        var date = this.props.match.params.date;
+        // let date = this.props.match.params.date;
+        const paramDate = this.props.match.params.date;
         const today = new Date().toISOString().slice(0, 10);
-        date = (date === undefined) ? String(today) : date;
+        const date = (paramDate === undefined) ? String(today) : paramDate;
         return date;
     }
 
@@ -100,24 +104,37 @@ export default class DailyView extends Component {
     setCurrentTask(task) {
         this.setState({
             currentTask: task,
-            currentIdx: task._id
+            currentIdx: task._id,
         });
     }
 
-    async onClickDelete() {
+    async retrieveTasks(date) {
         try {
-            let response = await TaskService.deleteTaskById(this.state.currentIdx);
+            const response = await TaskService.findTodayTask(date);
+            const tasks = await response.data;
+            console.log(tasks);
             this.setState({
-                deleteMessage: response.data,
-                currentIdx: '',
-                currentTask: null
-            })
-            this.retrieveTasks(this.state.date);
-        } catch(err) {
+                tasks,
+            });
+        } catch (err) {
             console.log(err);
             this.setState({
-                deleteMessage: "Failed to delete this task."
-            })
+                taskMessage: 'Click add to create a new task.',
+            });
+        }
+    }
+
+    async retrieveSummary(date) {
+        try {
+            const response = await SummaryService.findTodaySummary(date);
+            this.setState({
+                summary: response.data,
+            });
+        } catch (err) {
+            this.setState({
+                summaryMessage: "Click new to write today's summary",
+            });
+            console.log(err);
         }
     }
 
@@ -125,142 +142,143 @@ export default class DailyView extends Component {
      * Render DailyView component
      */
     render() {
-        const currentTask = this.state.currentTask;
-        const summary = this.state.summary;
-        const tasks = this.state.tasks;
+        const {
+            currentTask, summary, tasks, date, deleteMessage,
+            summaryMessage, taskMessage, currentIdx,
+        } = this.state;
+
         return (
-            <div className='list row'>
-                <div style={{marginBottom: '1rem'}}>
-                    <h3>{this.state.date}</h3>
+            <div className="list row">
+                <div style={{ marginBottom: '1rem' }}>
+                    <h3>{date}</h3>
                 </div>
-                <div className='list row'>
-                    <div className='col-md-6' style={{marginBottom: '2rem'}}>
+                <div className="list row">
+                    <div className="col-md-6" style={{ marginBottom: '2rem' }}>
                         <div>
                             <h4>To-do List</h4>
-                            {this.state.deleteMessage &&
-                                <div style={{color: 'darkred'}}>
-                                    {this.state.deleteMessage}
+                            {deleteMessage
+                            && (
+                                <div style={{ color: 'darkred' }}>
+                                    {deleteMessage}
                                 </div>
-                            }
+                            )}
                             <Link
-                                to={'/addTask'}
-                                className='badge badge-info mr-2'
+                                to="/addTask"
+                                className="badge badge-info mr-2"
                             >
                                 Add
                             </Link>
                         </div>
-                        {this.state.taskMessage === '' ? (
+                        {taskMessage === '' ? (
                             <div>
-                            <ul className='list-group'>
-                                {tasks &&
-                                tasks.map((task) => (
-                                    <li
-                                        className={
-                                            'list-group-item ' +
-                                            (task._id === this.state.currentIdx ? 'active' : '')
-                                        }
-                                        style={task.finish === 1 ? {color: "gray"} : {color: "black"}}
-                                        onClick={() => this.setCurrentTask(task)}
-                                        key={task._id}
-                                    >
-                                        {task.title}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                        ):(
+                                <ul className="list-group">
+                                    {tasks
+                                    && tasks.map((task) => (
+                                        <li
+                                            className={
+                                                `list-group-item ${
+                                                    task._id === currentIdx ? 'active' : ''}`
+                                            }
+                                            style={task.finish === 1 ? { color: 'gray' } : { color: 'black' }}
+                                            onClick={() => this.setCurrentTask(task)}
+                                            key={task._id}
+                                        >
+                                            {task.title}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ) : (
                             <div>
-                                {this.state.taskMessage}
+                                {taskMessage}
                             </div>
                         )}
                     </div>
-                    <div className='col-md-6'>
+                    <div className="col-md-6">
                         {currentTask ? (
                             <div>
                                 <h4>Task</h4>
                                 <div>
-                                    <label>
-                                        <strong>title:</strong>
-                                    </label>{' '}
+                                    <button type="button" onClick={this.onClickDelete} className="btn btn-outline-danger mr-2">
+                                        Delete
+                                    </button>
+                                </div>
+                                <div>
+                                    <strong>title:</strong>
+                                    {' '}
                                     {currentTask.title}
                                 </div>
                                 <div>
-                                    <label>
-                                        <strong>description:</strong>
-                                    </label>{' '}
+                                    <strong>description:</strong>
+                                    {' '}
                                     {currentTask.description}
                                 </div>
                                 <div>
-                                    <label>
-                                        <strong>type:</strong>
-                                    </label>{' '}
+                                    <strong>type:</strong>
+                                    {' '}
                                     {currentTask.type}
                                 </div>
                                 <div
-                                    style={currentTask.finish === 1 ? {color: "darkgreen"}:{color: "darkred"}}
+                                    style={currentTask.finish === 1 ? { color: 'darkgreen' } : { color: 'darkred' }}
                                 >
-                                    <label>
-                                        <strong>{currentTask.finish === 1 ? 'Finished' : 'Unfinished'}</strong>
-                                    </label>
+                                    <strong>{currentTask.finish === 1 ? 'Finished' : 'Unfinished'}</strong>
                                 </div>
                                 <Link
-                                    to={'/task/' + currentTask._id}
-                                    className='badge badge-warning mr-2'
+                                    to={`/task/${currentTask._id}`}
+                                    className="badge badge-warning mr-2"
                                 >
                                     Edit
                                 </Link>
-                                <button onClick={this.onClickDelete} className='badge btn-danger mr-2'>
-                                    Delete
-                                </button>
                             </div>
                         ) : (
                             <div>
-                                <br />
                                 <p>Please click on a task...</p>
                             </div>
                         )}
                     </div>
                 </div>
-                <div className='list row'>
-                    <div className='col-md-6'>
-                        <div className='list row'>
+                <div className="list row">
+                    <div className="col-md-6">
+                        <div className="list row">
                             <div>
-                                <h4>Today's Summary</h4>
+                                <h4>Today&apos;s Summary</h4>
                             </div>
-                            <div className='col-md-3'>
-                                {summary.mood && 
-                                    <div>
-                                        <img src={EMO_MAP[summary.mood]}
-                                            alt='mood of summary'
-                                            className='photo'
-                                            style={styles["image_style"]}
-                                        />
-                                    </div>
-                                }
+                            <div className="col-md-3">
+                                {summary.mood
+                                    && (
+                                        <div>
+                                            <img
+                                                src={EMO_MAP[summary.mood]}
+                                                alt="mood of summary"
+                                                className="photo"
+                                                style={styles.image_style}
+                                            />
+                                        </div>
+                                    )}
                             </div>
                         </div>
-                        {this.state.summaryMessage === '' ? (
+                        {summaryMessage === '' ? (
                             <div>
                                 {summary.content}
                                 <div>
-                                <Link
-                                    to={'/summary/' + this.state.date}
-                                    className='badge badge-warning'
-                                >
-                                    Edit
-                                </Link>
+                                    <Link
+                                        to={`/summary/${date}`}
+                                        className="badge badge-warning"
+                                    >
+                                        Edit
+                                    </Link>
                                 </div>
                             </div>
-                        ):(
+                        ) : (
                             <div>
-                                {this.state.summaryMessage}
+                                {summaryMessage}
                                 <div>
-                                <Link
-                                    to={'/addSummary/' + this.state.date}
-                                    className='badge badge-info'
-                                >
-                                    New
-                                </Link>
+                                    <Link
+                                        to={`/addSummary/${date}`}
+                                        className="badge badge-info"
+                                    >
+                                        New
+                                    </Link>
                                 </div>
                             </div>
                         )}
@@ -268,21 +286,5 @@ export default class DailyView extends Component {
                 </div>
             </div>
         );
-    }
-}
-
-const EMO_MAP = {
-    'sad': sadImg,
-    'angry': angryImg,
-    'good': goodImg,
-    'happy': happyImg
-}
-
-const styles = {
-    image_style : {
-        flex: 1,
-        height: '30px',
-        width: '30px',
-        justifyContent: 'left'
     }
 }

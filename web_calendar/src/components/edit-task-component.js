@@ -1,28 +1,27 @@
 import React, { Component } from 'react';
-import Dropdown from "react-bootstrap/Dropdown";
-import { DropdownButton } from "react-bootstrap";
-import TaskService from "../services/task-service";
+import Dropdown from 'react-bootstrap/Dropdown';
+import { DropdownButton } from 'react-bootstrap';
+import TaskService from '../services/task-service';
 
-const idx_map = {
-    'life': 0,
-    'work': 1,
-    'study': 2,
-    'other': 3
-}
+const idxMap = {
+    life: 0,
+    work: 1,
+    study: 2,
+    other: 3,
+};
 
 const options = [
-    'life', 'work', 'study', 'other'
+    'life', 'work', 'study', 'other',
 ];
 
 /**
- * Component for displaying information of a task, and 
+ * Component for displaying information of a task, and
  * input box and buttons for user to update this task.
  */
 export default class EditTask extends Component {
-
     /**
      * Represents an EditTask component.
-     * @param {*} props 
+     * @param {*} props
      */
     constructor(props) {
         super(props);
@@ -41,9 +40,9 @@ export default class EditTask extends Component {
                 description: '',
                 type: '',
                 finish: 0,
-                delay: 0
+                delay: 0,
             },
-            message: ''
+            message: '',
         };
     }
 
@@ -55,81 +54,92 @@ export default class EditTask extends Component {
         this.retrieveCurrentTask();
     }
 
-
-    async retrieveCurrentTask() {
-        try {
-            let response = await TaskService.findTaskById(this.props.match.params.id);
-            this.setState({
-                currentTask: response.data
-            })
-        } catch(err) {
-            console.log(err);
-        }
-    }
-
     /**
-     * Track user's input in the box for title, and store 
+     * Track user's input in the box for title, and store
      * the title in component's state.
-     * @param {string} e 
+     * @param {string} e
      */
     onChangeTitle(e) {
         const title = e.target.value;
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             currentTask: {
                 ...prevState.currentTask,
-                title: title
-            }
+                title,
+            },
         }));
     }
 
     /**
-     * Track user's input in the box for description, and store 
+     * Track user's input in the box for description, and store
      * the description in component's state.
-     * @param {string} e 
+     * @param {string} e
      */
     onChangeDescription(e) {
         const description = e.target.value;
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             currentTask: {
                 ...prevState.currentTask,
-                description: description
-            }
+                description,
+            },
         }));
     }
 
     /**
-     * Track user's choice in the dropdown, and store the choice 
+     * Track user's choice in the dropdown, and store the choice
      * in component's state
-     * @param {string} eventKey 
+     * @param {string} eventKey
      */
     onChangeType(eventKey) {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             currentTask: {
                 ...prevState.currentTask,
-                type: eventKey
-            }
+                type: eventKey,
+            },
         }));
     }
 
+    /**
+     * Listener for button mark as finished/unfinished, call
+     * controller to update task's attribute of finish.
+     * @param {Integer} status
+     */
     onClickMark(status) {
         const data = {
-            finish: status
-        }
+            finish: status,
+        };
         this.updateTask(data);
     }
 
+    /**
+     * Helper to get information of task to be edited.
+     */
+    async retrieveCurrentTask() {
+        try {
+            const response = await TaskService.findTaskById(this.props.match.params.id);
+            this.setState({
+                currentTask: response.data,
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    /**
+     * Helper to call controller to update a task by id.
+     * @param {JSON} data
+     */
     async updateTask(data) {
         try {
-            let response = await TaskService.putTaskById(this.props.match.params.id, data);
+            const response = await TaskService.putTaskById(this.props.match.params.id, data);
             this.setState({
-                message: response.data
+                message: response.data,
             });
             this.retrieveCurrentTask();
-        } catch(err) {
+        } catch (err) {
             console.log(err);
             this.setState({
-                message: 'Failed to update task.'
-            })
+                message: 'Failed to update task.',
+            });
         }
     }
 
@@ -137,22 +147,23 @@ export default class EditTask extends Component {
      * Render EditTask component.
      */
     render() {
-        const currentTask = this.state.currentTask;
+        const { currentTask } = this.state;
         const optionsCopy = JSON.parse(JSON.stringify(options));
-        optionsCopy.splice(idx_map[currentTask.type], 1);
+        optionsCopy.splice(idxMap[currentTask.type], 1);
         return (
             <div>
                 {currentTask ? (
-                    <div className='edit-form'>
+                    <div className="edit-form">
                         <h4>Task</h4>
-                        {this.state.message &&
-                            <div style={{color: 'darkred'}}>
-                                {this.state.message}
-                            </div>
-                        }
+                        {this.state.message
+                            && (
+                                <div style={{ color: 'darkred' }}>
+                                    {this.state.message}
+                                </div>
+                            )}
                         <form>
                             <div className="form-group">
-                                <label htmlFor="title">Title</label>
+                                Title
                                 <input
                                     type="text"
                                     className="form-control"
@@ -162,7 +173,7 @@ export default class EditTask extends Component {
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="description">Description</label>
+                                Description
                                 <input
                                     type="text"
                                     className="form-control"
@@ -172,19 +183,19 @@ export default class EditTask extends Component {
                                 />
                             </div>
                             <div>
-                                <label
-                                    htmlFor="isFinished"
-                                    style={currentTask.finish === 1 ? {color: 'darkgreen'} : {color: "darkred"}}
+                                <strong
+                                    style={currentTask.finish === 1 ? { color: 'darkgreen' } : { color: 'darkred' }}
                                 >
-                                    <strong>{currentTask.finish === 1 ? 'Finished':'Unfinished'}</strong>
-                                </label>
+                                    {currentTask.finish === 1 ? 'Finished' : 'Unfinished'}
+                                </strong>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="type">Type</label>
-                                <DropdownButton id="dropdown-item-button"
-                                                title={currentTask.type}
-                                                variant="outline-secondary"
-                                                onSelect={this.onChangeType}
+                                Type
+                                <DropdownButton
+                                    id="dropdown-item-button"
+                                    title={currentTask.type}
+                                    variant="outline-secondary"
+                                    onSelect={this.onChangeType}
                                 >
                                     <Dropdown.Item eventKey={optionsCopy[0]}>
                                         {optionsCopy[0]}
@@ -199,18 +210,34 @@ export default class EditTask extends Component {
                             </div>
                         </form>
                         <div>
-                            <button onClick={()=>this.updateTask(this.state.currentTask)} className='btn btn-info mr-2'>
+                            <button
+                                type="button"
+                                onClick={() => this.updateTask(this.state.currentTask)}
+                                className="btn btn-info mr-2"
+                            >
                                 Update
                             </button>
-                            <button onClick={()=>this.onClickMark(Math.abs(this.state.currentTask.finish - 1))} className='btn btn-outline-secondary mr-2'>
-                                {'Mark as '.concat((currentTask.finish === 1) ? 'Unfinished':'finished')}
+                            <button
+                                type="button"
+                                onClick={
+                                    () => this.onClickMark(
+                                        Math.abs(this.state.currentTask.finish - 1),
+                                    )
+                                }
+                                className="btn btn-outline-secondary mr-2"
+                            >
+                                {'Mark as '.concat((currentTask.finish === 1) ? 'Unfinished' : 'finished')}
                             </button>
-                            <button onClick={this.props.history.goBack} className='btn btn-outline-danger mr-2'>
+                            <button
+                                type="button"
+                                onClick={this.props.history.goBack}
+                                className="btn btn-outline-danger mr-2"
+                            >
                                 Back
                             </button>
                         </div>
                     </div>
-                ):(
+                ) : (
                     <div>
                         invalid task id
                     </div>

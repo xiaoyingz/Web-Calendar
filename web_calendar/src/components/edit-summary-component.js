@@ -1,32 +1,51 @@
 import React, { Component } from 'react';
-import Dropdown from "react-bootstrap/Dropdown";
-import { DropdownButton } from "react-bootstrap";
+import Dropdown from 'react-bootstrap/Dropdown';
+import { DropdownButton } from 'react-bootstrap';
 import sadImg from '../images/sad.png';
 import happyImg from '../images/happy.png';
 import angryImg from '../images/angry.png';
 import goodImg from '../images/good.png';
 import SummaryService from '../services/summary-service';
 
-const idx_map = {
-    'angry': 0,
-    'sad': 1,
-    'happy': 2,
-    'good': 3
-}
+const idxMap = {
+    angry: 0,
+    sad: 1,
+    happy: 2,
+    good: 3,
+};
 
 const options = [
-    'angry', 'sad', 'happy', 'good'
+    'angry', 'sad', 'happy', 'good',
 ];
+
+const EMO_MAP = {
+    sad: sadImg,
+    angry: angryImg,
+    good: goodImg,
+    happy: happyImg,
+};
+
+const styles = {
+    image_style: {
+        flex: 1,
+        height: '30px',
+        width: '30px',
+        justifyContent: 'left',
+    },
+    textarea_style: {
+        width: '800px',
+        height: '200px',
+    },
+};
 
 /**
  * Component for displaying information of a day's summary, and
  * fields allowing user to update the summary.
  */
 export default class EditSummary extends Component {
-
     /**
      * Represents an EditSummary component
-     * @param {*} props 
+     * @param {*} props
      */
     constructor(props) {
         super(props);
@@ -35,15 +54,14 @@ export default class EditSummary extends Component {
         this.onChangeMood = this.onChangeMood.bind(this);
         this.retrieveCurrentSummary = this.retrieveCurrentSummary.bind(this);
         this.onClickUpdate = this.onClickUpdate.bind(this);
-        this.initSummary = this.initSummary.bind(this);
 
         this.state = {
             message: '',
             currentSummary: {
                 _id: '',
                 content: '',
-                mood: 'happy'
-            }
+                mood: 'happy',
+            },
         };
     }
 
@@ -56,73 +74,68 @@ export default class EditSummary extends Component {
     }
 
     /**
-     * Get today's summary and store it in the state
-     */
-    async retrieveCurrentSummary() {
-        const date = this.props.match.params.id;
-        try {
-            let response = await SummaryService.findTodaySummary(date);
-            this.setState({
-                currentSummary: response.data
-            })
-        } catch(err) {
-            console.log(err);
-        }
-    }
-
-    async initSummary(data) {
-        try{
-            let response = await SummaryService.createSummary(data);
-            console.log(response.data);
-        } catch(err) {
-            console.log(err);
-        }
-    }
-
-    /**
-     * Track user's input in the box for content, and store 
+     * Track user's input in the box for content, and store
      * the content in component's state.
      * @param {string} e - user's input
      */
     onChangeContent(e) {
         const content = e.target.value;
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             currentSummary: {
                 ...prevState.currentSummary,
-                content: content
-            }
+                content,
+            },
         }));
     }
 
     /**
-     * Track user's choice in the dropdown, and store the choice 
+     * Track user's choice in the dropdown, and store the choice
      * in component's state
      * @param {string} eventKey - user's choice for summary's mood
      */
     onChangeMood(eventKey) {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             currentSummary: {
                 ...prevState.currentSummary,
-                mood: eventKey
-            }
+                mood: eventKey,
+            },
         }));
     }
 
+    /**
+     * Listener for button update, call controller to update
+     * a record of summary by id.
+     */
     async onClickUpdate() {
         try {
             const data = {
                 content: this.state.currentSummary.content,
-                mood: this.state.currentSummary.mood
-            }
-            let response = await SummaryService.editSummary(this.props.match.params.id, data);
+                mood: this.state.currentSummary.mood,
+            };
+            const response = await SummaryService.editSummary(this.props.match.params.id, data);
             this.setState({
-                message: response.data
+                message: response.data,
             });
-        } catch(err) {
+        } catch (err) {
             console.log(err.response.data);
             this.setState({
-                message: err.response.data
-            })
+                message: err.response.data,
+            });
+        }
+    }
+
+    /**
+     * Get today's summary and store it in the state
+     */
+    async retrieveCurrentSummary() {
+        const date = this.props.match.params.id;
+        try {
+            const response = await SummaryService.findTodaySummary(date);
+            this.setState({
+                currentSummary: response.data,
+            });
+        } catch (err) {
+            console.log(err);
         }
     }
 
@@ -130,40 +143,45 @@ export default class EditSummary extends Component {
      * Render EditSummary component.
      */
     render() {
-        const currentSummary = this.state.currentSummary;
+        const { currentSummary } = this.state;
         const optionsCopy = JSON.parse(JSON.stringify(options));
-        optionsCopy.splice(idx_map[currentSummary.mood], 1);
+        optionsCopy.splice(idxMap[currentSummary.mood], 1);
         return (
             <div>
                 {currentSummary ? (
-                    <div className='edit-form'>
-                        <div className='list row'>
+                    <div className="edit-form">
+                        <div className="list row">
                             <div>
                                 <h4>Summary</h4>
                             </div>
-                            <div className='col-md-6'>
-                                <img src={EMO_MAP[currentSummary.mood]}
-                                     alt='mood of summary'
-                                     className='photo'
-                                     style={styles["image_style"]}
+                            <div className="col-md-6">
+                                <img
+                                    src={EMO_MAP[currentSummary.mood]}
+                                    alt="mood of summary"
+                                    className="photo"
+                                    style={styles.image_style}
                                 />
                             </div>
                         </div>
                         <h5
-                            style={{color: "darkgray"}}
-                        >{currentSummary._id}</h5>
-                        {this.state.message && 
-                            <div style={{color: 'darkred'}}>
-                                {this.state.message}
-                            </div>
-                        }
+                            style={{ color: 'darkgray' }}
+                        >
+                            {currentSummary._id}
+                        </h5>
+                        {this.state.message
+                            && (
+                                <div style={{ color: 'darkred' }}>
+                                    {this.state.message}
+                                </div>
+                            )}
                         <form>
                             <div className="form-group">
-                                <label htmlFor="mood">Mood</label>
-                                <DropdownButton id="dropdown-item-button"
-                                                title={currentSummary.mood}
-                                                variant="outline-secondary"
-                                                onSelect={this.onChangeMood}
+                                Mood
+                                <DropdownButton
+                                    id="dropdown-item-button"
+                                    title={currentSummary.mood}
+                                    variant="outline-secondary"
+                                    onSelect={this.onChangeMood}
                                 >
                                     <Dropdown.Item eventKey={optionsCopy[0]}>
                                         {optionsCopy[0]}
@@ -177,53 +195,32 @@ export default class EditSummary extends Component {
                                 </DropdownButton>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="content">Content</label>
+                                Content
                                 <div>
                                     <textarea
                                         style={styles.textarea_style}
                                         value={currentSummary.content}
                                         onChange={this.onChangeContent}
-                                    >
-                                </textarea>
+                                    />
                                 </div>
                             </div>
 
                         </form>
                         <div>
-                            <button onClick={this.onClickUpdate} className='btn btn-info mr-2'>
+                            <button type="button" onClick={this.onClickUpdate} className="btn btn-info mr-2">
                                 Update
                             </button>
-                            <button onClick={this.props.history.goBack} className='btn btn-outline-danger mr-2'>
+                            <button type="button" onClick={this.props.history.goBack} className="btn btn-outline-danger mr-2">
                                 Back
                             </button>
                         </div>
                     </div>
-                ):(
+                ) : (
                     <div>
                         Invalid summary
                     </div>
                 )}
             </div>
         );
-    }
-}
-
-const EMO_MAP = {
-    'sad': sadImg,
-    'angry': angryImg,
-    'good': goodImg,
-    'happy': happyImg
-}
-
-const styles = {
-    image_style : {
-        flex: 1,
-        height: '30px',
-        width: '30px',
-        justifyContent: 'left'
-    },
-    textarea_style: {
-        width: '800px',
-        height: '200px'
     }
 }
