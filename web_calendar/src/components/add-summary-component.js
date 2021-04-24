@@ -44,10 +44,9 @@ const styles = {
  * fields allowing user to fill the summary.
  */
 export default class AddSummary extends Component {
-
     /**
      * Represents an AddSummary component.
-     * @param {*} props 
+     * @param {*} props
      */
     constructor(props) {
         super(props);
