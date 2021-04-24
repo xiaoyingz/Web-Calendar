@@ -24,10 +24,9 @@ const options = [
  * Component for rendering adding new task page.
  */
 class AddTask extends Component {
-
     /**
      * Represent an AddTask component.
-     * @param {*} props 
+     * @param {*} props
      */
     constructor(props) {
         super(props);
@@ -81,7 +80,7 @@ class AddTask extends Component {
 
     /**
      * Change the type of the task.
-     * @param {String} eventKey 
+     * @param {String} eventKey
      */
     onChangeType(eventKey) {
         this.setState({
