@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { DropdownButton } from 'react-bootstrap';
 import sadImg from '../images/sad.png';
@@ -39,38 +40,31 @@ const styles = {
 };
 
 /**
- * Component for displaying information of a day's summary, and
- * fields allowing user to update the summary.
+ * Component for creating daily summary, and
+ * fields allowing user to fill the summary.
  */
-export default class EditSummary extends Component {
+export default class AddSummary extends Component {
+
     /**
-     * Represents an EditSummary component
-     * @param {*} props
+     * Represents an AddSummary component.
+     * @param {*} props 
      */
     constructor(props) {
         super(props);
 
         this.onChangeContent = this.onChangeContent.bind(this);
         this.onChangeMood = this.onChangeMood.bind(this);
-        this.retrieveCurrentSummary = this.retrieveCurrentSummary.bind(this);
-        this.onClickUpdate = this.onClickUpdate.bind(this);
+        this.resetState = this.resetState.bind(this);
+        this.onClickSubmit = this.onClickSubmit.bind(this);
 
         this.state = {
-            message: '',
             currentSummary: {
-                _id: '',
-                content: '',
+                _id: this.props.match.params.id,
                 mood: 'happy',
+                content: '',
             },
+            message: '',
         };
-    }
-
-    /**
-     * Get information of current summary immediately
-     * this component is mounted
-     */
-    componentDidMount() {
-        this.retrieveCurrentSummary();
     }
 
     /**
@@ -90,7 +84,7 @@ export default class EditSummary extends Component {
 
     /**
      * Track user's choice in the dropdown, and store the choice
-     * in component's state
+     * in component's state.
      * @param {string} eventKey - user's choice for summary's mood
      */
     onChangeMood(eventKey) {
@@ -103,53 +97,61 @@ export default class EditSummary extends Component {
     }
 
     /**
-     * Listener for button update, call controller to update
-     * a record of summary by id.
+     * Listener for button submit, call controller to upload a
+     * new record of summary.
      */
-    async onClickUpdate() {
+    async onClickSubmit() {
         try {
-            const data = {
-                content: this.state.currentSummary.content,
-                mood: this.state.currentSummary.mood,
-            };
-            const response = await SummaryService.editSummary(this.props.match.params.id, data);
+            const { currentSummary } = this.state;
+            const response = await SummaryService.createSummary(currentSummary);
+            console.log(response.data);
             this.setState({
                 message: response.data,
             });
         } catch (err) {
-            console.log(err.response.data);
             this.setState({
-                message: err.response.data,
+                message: 'Falied to create summary',
             });
-        }
-    }
-
-    /**
-     * Get today's summary and store it in the state
-     */
-    async retrieveCurrentSummary() {
-        const date = this.props.match.params.id;
-        try {
-            const response = await SummaryService.findTodaySummary(date);
-            this.setState({
-                currentSummary: response.data,
-            });
-        } catch (err) {
             console.log(err);
         }
     }
 
     /**
-     * Render EditSummary component.
+     * Helper to reset state to be default.
+     */
+    resetState() {
+        this.setState({
+            currentSummary: {
+                _id: this.props.match.params.id,
+                mood: 'happy',
+                content: '',
+            },
+            message: '',
+        });
+    }
+
+    /**
+     * Render AddSummary component.
      */
     render() {
         const { currentSummary } = this.state;
         const optionsCopy = JSON.parse(JSON.stringify(options));
         optionsCopy.splice(idxMap[currentSummary.mood], 1);
         return (
-            <div>
-                {currentSummary ? (
-                    <div className="edit-form">
+            <div className="submit-form">
+                {this.state.message ? (
+                    <div>
+                        <h4>{this.state.message}</h4>
+                        <div>
+                            <Link to={`/dailyView/${this.props.match.params.id}`}>
+                                <button type="button" className="btn btn-outline-danger">
+                                    Back
+                                </button>
+                            </Link>
+                        </div>
+                    </div>
+                ) : (
+                    <div>
                         <div className="list row">
                             <div>
                                 <h4>Summary</h4>
@@ -168,12 +170,6 @@ export default class EditSummary extends Component {
                         >
                             {currentSummary._id}
                         </h5>
-                        {this.state.message
-                            && (
-                                <div style={{ color: 'darkred' }}>
-                                    {this.state.message}
-                                </div>
-                            )}
                         <form>
                             <div className="form-group">
                                 Mood
@@ -207,19 +203,16 @@ export default class EditSummary extends Component {
 
                         </form>
                         <div>
-                            <button type="button" onClick={this.onClickUpdate} className="btn btn-info mr-2">
-                                Update
+                            <button type="button" onClick={this.onClickSubmit} className="btn btn-info mr-2">
+                                Submit
                             </button>
                             <button type="button" onClick={this.props.history.goBack} className="btn btn-outline-danger mr-2">
                                 Back
                             </button>
                         </div>
                     </div>
-                ) : (
-                    <div>
-                        Invalid summary
-                    </div>
                 )}
+
             </div>
         );
     }
