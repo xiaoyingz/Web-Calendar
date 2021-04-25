@@ -10,6 +10,7 @@ import DailyView from "./components/daily-view-component";
 import EditTask from "./components/edit-task-component";
 import EditSummary from "./components/edit-summary-component";
 import AddSummary from "./components/add-summary-component";
+import DailyPie from "./components/daily-pie-component";
 
 class App extends Component {
   render() {
@@ -53,6 +54,7 @@ class App extends Component {
             <Route path='/task/:id' component={EditTask} />
             <Route path='/summary/:id' component={EditSummary} />
             <Route path='/addSummary/:id' component={AddSummary} />
+            <Route path='/pie/:date' component={DailyPie} />
           </Switch>
         </div>
       </div>

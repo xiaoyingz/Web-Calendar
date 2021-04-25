@@ -90,7 +90,6 @@ export default class DailyView extends Component {
     }
 
     getDate() {
-        // let date = this.props.match.params.date;
         const paramDate = this.props.match.params.date;
         const today = new Date().toISOString().slice(0, 10);
         const date = (paramDate === undefined) ? String(today) : paramDate;
@@ -171,6 +170,12 @@ export default class DailyView extends Component {
                         </div>
                         {taskMessage === '' ? (
                             <div>
+                                <Link
+                                    to={"/pie/"+date}
+                                    className="badge badge-info mr-2"
+                                >
+                                    Visualization
+                                </Link>
                                 <ul className="list-group">
                                     {tasks
                                     && tasks.map((task) => (

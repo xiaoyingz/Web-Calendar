@@ -2,7 +2,7 @@ import http from '../http-common';
 
 class TaskService {
     findTodayTask(date) {
-        return http.get(`/task?date=${date}`);
+        return http.get(`/task/date?date=${date}`);
     }
 
     findTaskById(id) {
@@ -19,6 +19,10 @@ class TaskService {
 
     deleteTaskById(id) {
         return http.delete(`/task?id=${id}`);
+    }
+
+    getPieData(date) {
+        return http.get(`/task/pie?date=${date}`);
     }
 }
 
