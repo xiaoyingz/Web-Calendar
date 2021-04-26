@@ -1,12 +1,10 @@
 Web_calendar
 ====================
-project-xz45-1.2
+project-xz45-1.3
 ------------------
-* Integrated qiruilu2's and xz45's frontend from 1.1
-* Responsive daily overview page
-* Responsive page for adding a task
-* Responsive page for editing a task
-* Responsive page for editing summary
+* Added backend for visualization
+* Data visualization for everyday tasks
+* Added weather API
 
 Prerequisite and environment
 -------------
