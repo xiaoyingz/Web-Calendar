@@ -99,12 +99,13 @@ export default class DailyPie extends Component {
             .append('text')
             .attr('text-anchor', 'middle')
             .attr('alignment-baseline', 'middle')
-            .text((d) => d.data.label)
+            .text((d) => d.data.label+":"+d.data.value)
             .style('fill', (_, i) => colorScale(data.length - data.length*i))
             .attr('transform', (d) => {
                 const [x, y] = arcGenerator.centroid(d);
                 return `translate(${x}, ${y})`;
             });
+
         return (
             <div>
                 <div id="pie-container" />

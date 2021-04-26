@@ -182,10 +182,6 @@ export default class DailyView extends Component {
             currentTask, summary, tasks, date, deleteMessage,
             summaryMessage, taskMessage, currentIdx, weather, isToday,
         } = this.state;
-        console.log('render');
-        console.log(weather['weather'][0]['main']);
-        console.log(weather['weather']);
-        console.log("http://openweathermap.org/img/w/"+weather['weather'][0]['icon']+".png")
         return (
             <div>
                 <div className="list row">
@@ -204,9 +200,6 @@ export default class DailyView extends Component {
                                         style={styles.weather_style}
                                     />
                                 </div>
-                                {/* <div style={{ marginBottom: '1rem' }}>
-                                    <h5>{weather['weather'][0]['description']}</h5>
-                                </div> */}
                             </div>
                         ) : (
                             <div></div>
