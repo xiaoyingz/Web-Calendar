@@ -7,6 +7,7 @@ import goodImg from '../images/good.png';
 
 import TaskService from '../services/task-service';
 import SummaryService from '../services/summary-service';
+import WeatherSerive from '../services/weather-service';
 
 const EMO_MAP = {
     sad: sadImg,
@@ -20,6 +21,12 @@ const styles = {
         flex: 1,
         height: '30px',
         width: '30px',
+        justifyContent: 'left',
+    },
+    weather_style: {
+        flex: 1,
+        height: '60px',
+        width: '60px',
         justifyContent: 'left',
     },
 };
@@ -41,6 +48,7 @@ export default class DailyView extends Component {
         this.retrieveTasks = this.retrieveTasks.bind(this);
         this.retrieveSummary = this.retrieveSummary.bind(this);
         this.onClickDelete = this.onClickDelete.bind(this);
+        this.retrieveWeather = this.retrieveWeather.bind(this);
 
         this.state = {
             currentTask: null,
@@ -59,11 +67,29 @@ export default class DailyView extends Component {
             taskMessage: '',
             summaryMessage: '',
             deleteMessage: '',
+            isToday: false,
+            weather: {
+                "weather": [
+                {
+                    "id": 800,
+                    "main": '',
+                    "description": '',
+                    "icon": ''
+                }
+            ],},
         };
     }
 
     componentDidMount() {
         const date = this.getDate();
+        const today = new Date().toISOString().slice(0, 10);
+        if (date == today) {
+            console.log("isToday");
+            this.setState({
+                isToday: true,
+            });
+            this.retrieveWeather();
+        }
         this.setState({
             date,
         });
@@ -137,19 +163,55 @@ export default class DailyView extends Component {
         }
     }
 
+    async retrieveWeather() {
+        try {
+            const response = await WeatherSerive.getWeather();
+            this.setState({
+                weather: response.data,
+            })
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
     /**
      * Render DailyView component
      */
     render() {
         const {
             currentTask, summary, tasks, date, deleteMessage,
-            summaryMessage, taskMessage, currentIdx,
+            summaryMessage, taskMessage, currentIdx, weather, isToday,
         } = this.state;
-
+        console.log('render');
+        console.log(weather['weather'][0]['main']);
+        console.log(weather['weather']);
+        console.log("http://openweathermap.org/img/w/"+weather['weather'][0]['icon']+".png")
         return (
-            <div className="list row">
-                <div style={{ marginBottom: '1rem' }}>
-                    <h3>{date}</h3>
+            <div>
+                <div className="list row">
+                    <div className="col-md-6">
+                        <h1>{date}</h1>
+                    </div>
+                    <div className="col-md-3">
+                        {isToday === true ? (
+                            <div>
+                                <div>
+                                    <img
+                                        src={"http://openweathermap.org/img/w/"+weather['weather'][0]['icon']+".png"}
+                                        alt="weather icon"
+                                        className="photo"
+                                        title={weather['weather'][0]['main']+": "+weather['weather'][0]['description']}
+                                        style={styles.weather_style}
+                                    />
+                                </div>
+                                {/* <div style={{ marginBottom: '1rem' }}>
+                                    <h5>{weather['weather'][0]['description']}</h5>
+                                </div> */}
+                            </div>
+                        ) : (
+                            <div></div>
+                        )}
+                    </div>
                 </div>
                 <div className="list row">
                     <div className="col-md-6" style={{ marginBottom: '2rem' }}>
@@ -257,6 +319,7 @@ export default class DailyView extends Component {
                                                 alt="mood of summary"
                                                 className="photo"
                                                 style={styles.image_style}
+                                                title={summary.mood}
                                             />
                                         </div>
                                     )}
