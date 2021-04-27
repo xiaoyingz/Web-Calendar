@@ -80,6 +80,10 @@ export default class DailyView extends Component {
         };
     }
 
+    /**
+     * Get desired data i.e. date, tasks, summary, and weather once
+     * this component is mounted.
+     */
     componentDidMount() {
         const date = this.getDate();
         const today = new Date().toISOString().slice(0, 10);
@@ -97,6 +101,9 @@ export default class DailyView extends Component {
         this.retrieveTasks(date);
     }
 
+    /**
+     * Button Listener for Delete, call controller to delete a task by id.
+     */
     async onClickDelete() {
         try {
             const { currentIdx, date } = this.state;
@@ -115,6 +122,10 @@ export default class DailyView extends Component {
         }
     }
 
+    /**
+     * Helper to parse url to get date, if url is '/', return today's date.
+     * @returns String in the format of "YY-MM-DD"
+     */
     getDate() {
         const paramDate = this.props.match.params.date;
         const today = new Date().toISOString().slice(0, 10);
@@ -133,6 +144,10 @@ export default class DailyView extends Component {
         });
     }
 
+    /**
+     * Call controller to get tasks by date, and store the data in the state.
+     * @param {String} date 
+     */
     async retrieveTasks(date) {
         try {
             const response = await TaskService.findTodayTask(date);
@@ -149,6 +164,10 @@ export default class DailyView extends Component {
         }
     }
 
+    /**
+     * Call controller to get summary by id, and store the data in the state.
+     * @param {String} date 
+     */
     async retrieveSummary(date) {
         try {
             const response = await SummaryService.findTodaySummary(date);
@@ -163,6 +182,9 @@ export default class DailyView extends Component {
         }
     }
 
+    /**
+     * Helper to get weather information from openweathermap.org.
+     */
     async retrieveWeather() {
         try {
             const response = await WeatherSerive.getWeather();

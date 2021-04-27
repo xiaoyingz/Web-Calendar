@@ -10,7 +10,15 @@ const innerRadius = 100;
 const width = 2 * outerRadius + margin.left + margin.right;
 const height = 2 * outerRadius + margin.top + margin.bottom;
 
+/**
+ * Component for displaying the pie chart for everyday tasks.
+ */
 export default class DailyPie extends Component {
+    /**
+     * Represents a DailyPie component.
+     * @constructor
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
 
@@ -24,6 +32,9 @@ export default class DailyPie extends Component {
         };
     }
 
+    /**
+     * Retrieve today's pie data.
+     */
     componentDidMount() {
         const date = this.getDate();
         this.setState({
@@ -32,6 +43,10 @@ export default class DailyPie extends Component {
         this.retrievePieData(date);
     }
 
+    /**
+     * Helper to parse url to get date for visualization.
+     * @returns string in the format of "YY-MM-DD".
+     */
     getDate() {
         const paramDate = this.props.match.params.date;
         const today = new Date().toISOString().slice(0, 10);
@@ -39,6 +54,10 @@ export default class DailyPie extends Component {
         return date;
     }
 
+    /**
+     * Call controller to get pie data from backend.
+     * @param {String} date 
+     */
     async retrievePieData(date) {
         try {
             const response = await TaskService.getPieData(date);
@@ -53,6 +72,9 @@ export default class DailyPie extends Component {
         }
     }
 
+    /**
+     * Render DailyPie.
+     */
     render() {
         const data = this.state.pieData;
         const colorScale = d3     
