@@ -1,9 +1,8 @@
-from collections import OrderedDict
 import pymongo
 from pymongo import MongoClient
 from task_schema import task_schema
-from task_parser import search
-import ast
+from collections import OrderedDict
+import time
 import datetime
 
 
@@ -15,8 +14,7 @@ def connect_db():
     """
 
     cluster = MongoClient(
-        "mongodb+srv://xz45:971215@cluster" +
-        "0.b5ke5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+        "mongodb+srv://xz45:971215@cluster0.b5ke5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
     )
     curr_db = cluster["project"]
     return curr_db
@@ -50,7 +48,7 @@ def cursor_to_list(cursor):
 def find_task_by_date(curr_date, delay=0):
     """
     Get the tasks according to the date attribute and delay attribute.
-    :param curr_date: the date we want to get
+    :param curr_date: the date we want to get  
 
     :param delay: whether we need to specify the delay, default to 0.
     This attribute is for the delay function on week 4.
@@ -76,7 +74,7 @@ def find_task_by_date(curr_date, delay=0):
 def find_task_by_date_title(curr_date, curr_title):
     """
     Get one specific task according to the date and title.
-    :param curr_date: the date we want to get
+    :param curr_date: the date we want to get  
 
     :param curr_title: the title we want to get
 
@@ -89,14 +87,12 @@ def find_task_by_date_title(curr_date, curr_title):
     return None
 
 
-def update_task_by_id(curr_id, attr, attr_value):
+def update_task_by_id(curr_id, new_data):
     """
     Update a task for one specific attribute.
-    :param curr_id: the task id we want to update
+    :param curr_id: the task id we want to update  
 
-    :param attr: the attr to be updated
-
-    :param attr_value: the value needs to be set
+    :param new_data: new data of task to be updated
 
     :return: 0 if success, otherwise return different positive integers
 
@@ -115,7 +111,7 @@ def update_task_by_id(curr_id, attr, attr_value):
 
     try:
         collection.update_one(
-            filter={'_id': curr_id}, update={'$set': {attr: attr_value}})
+            filter={'_id': curr_id}, update={'$set': new_data})
         return 0
 
     except pymongo.errors.WriteError:
@@ -128,7 +124,7 @@ def update_task_by_id(curr_id, attr, attr_value):
 def delete_by_id(curr_id):
     """
     Delete a task according to the id.
-    :param curr_id: the task id we want to update
+    :param curr_id: the task id we want to update  
 
     :param attr: the attr to be updated
 
@@ -149,10 +145,46 @@ def delete_by_id(curr_id):
     return delete_result.deleted_count
 
 
+# def create_task(new_task):
+#     """
+#     Create a new task.
+#     :param new_task: a dictionary contains all
+#     the information about the new task
+
+#     :return: 0 if success, otherwise return a positive integers
+
+#     """
+#     try:
+#         curr_db = connect_db()
+#         print('connect to databse')
+#     except:
+#         print('fail to connect the databse')
+#         return 2
+
+#     collection = curr_db["task"]
+#     curr_id = new_task.get('_id', None)
+#     if curr_id is None:
+#         new_task['_id'] = int(time.time())
+
+#     try:
+#         year_month_day = new_task['date'].split('-')
+#         new_task['year'] = int(year_month_day[0])
+#         new_task['month'] = int(year_month_day[1])
+#         new_task['day'] = int(year_month_day[2])
+#     except ValueError:
+#         return 1
+
+#     try:
+#         collection.insert_one(new_task)
+#         return 0
+#     except pymongo.errors.WriteError:
+#         print(1)
+#         return 1
+
 def create_task(new_task):
     """
     Create a new task.
-    :param new_task: a dictionary contains all
+    :param new_task: a dictionary contains all 
     the information about the new task
 
     :return: 0 if success, otherwise return a positive integers
@@ -166,10 +198,23 @@ def create_task(new_task):
         return 2
 
     collection = curr_db["task"]
+    curr_id = new_task.get('_id', None)
+    if curr_id is None:
+        new_task['_id'] = int(time.time())
+
+    try:
+        year_month_day = new_task['date'].split('-')
+        new_task['year'] = int(year_month_day[0])
+        new_task['month'] = int(year_month_day[1])
+        new_task['day'] = int(year_month_day[2])
+    except ValueError:
+        return 1
+
     try:
         collection.insert_one(new_task)
         return 0
-    except:
+    except pymongo.errors.WriteError:
+        print(1)
         return 1
 
 
@@ -249,15 +294,59 @@ def find_monthly_tasks_counts(start_date, end_date):
     dates = iter_dates(start_date, end_date)
     result = {}
     for date in dates:
-        count = 0
+        count = [0, 0]
         for task in data:
             if task['date'] == date:
-                count += 1
-        result[date] = (count)
+                if task['finish']:
+                    count[1] += 1
+                else:
+                    count[0] += 1
+        result[date] = count
     print(result)
     return result
 
 
-if __name__ == '__main__':
+def delay_all_tasks_by_date(curr_date):
+    """
+    Update a task for one specific attribute.
+    :param curr_id: the task id we want to update  
 
-    find_monthly_tasks_counts("2021-04-01", "2021-04-30")
+    :param new_data: new data of task to be updated
+
+    :return: 0 if success, otherwise return different positive integers
+
+    """
+    try:
+        curr_db = connect_db()
+        print('connect to databse')
+    except:
+        print('fail to connect the databse')
+        return None
+
+    collection = curr_db["task"]
+    # cursor = collection.find({'date': curr_date})
+    # if cursor.count() == 0:
+    #     return 1
+
+    curr_day = datetime.datetime.strptime(curr_date, '%Y-%m-%d')
+    step = datetime.timedelta(days=1)
+    next_day = str((curr_day + step).date())
+    new_data = {
+        "date": next_day,
+        "delay": 0
+    }
+
+    try:
+        collection.update_many(
+            filter={'date': curr_date, 'finish': 0}, update={'$set': new_data})
+        return 0
+
+    except pymongo.errors.WriteError:
+        return 2
+
+    except:
+        return 3
+
+
+if __name__ == '__main__':
+    delay_all_tasks_by_date("2021-04-3")
