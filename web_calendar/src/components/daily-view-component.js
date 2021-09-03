@@ -7,6 +7,7 @@ import goodImg from '../images/good.png';
 
 import TaskService from '../services/task-service';
 import SummaryService from '../services/summary-service';
+import WeatherSerive from '../services/weather-service';
 
 const EMO_MAP = {
     sad: sadImg,
@@ -20,6 +21,12 @@ const styles = {
         flex: 1,
         height: '30px',
         width: '30px',
+        justifyContent: 'left',
+    },
+    weather_style: {
+        flex: 1,
+        height: '60px',
+        width: '60px',
         justifyContent: 'left',
     },
 };
@@ -41,6 +48,7 @@ export default class DailyView extends Component {
         this.retrieveTasks = this.retrieveTasks.bind(this);
         this.retrieveSummary = this.retrieveSummary.bind(this);
         this.onClickDelete = this.onClickDelete.bind(this);
+        this.retrieveWeather = this.retrieveWeather.bind(this);
 
         this.state = {
             currentTask: null,
@@ -59,11 +67,33 @@ export default class DailyView extends Component {
             taskMessage: '',
             summaryMessage: '',
             deleteMessage: '',
+            isToday: false,
+            weather: {
+                "weather": [
+                {
+                    "id": 800,
+                    "main": '',
+                    "description": '',
+                    "icon": ''
+                }
+            ],},
         };
     }
 
+    /**
+     * Get desired data i.e. date, tasks, summary, and weather once
+     * this component is mounted.
+     */
     componentDidMount() {
         const date = this.getDate();
+        const today = new Date().toISOString().slice(0, 10);
+        if (date == today) {
+            console.log("isToday");
+            this.setState({
+                isToday: true,
+            });
+            this.retrieveWeather();
+        }
         this.setState({
             date,
         });
@@ -71,6 +101,9 @@ export default class DailyView extends Component {
         this.retrieveTasks(date);
     }
 
+    /**
+     * Button Listener for Delete, call controller to delete a task by id.
+     */
     async onClickDelete() {
         try {
             const { currentIdx, date } = this.state;
@@ -89,8 +122,11 @@ export default class DailyView extends Component {
         }
     }
 
+    /**
+     * Helper to parse url to get date, if url is '/', return today's date.
+     * @returns String in the format of "YY-MM-DD"
+     */
     getDate() {
-        // let date = this.props.match.params.date;
         const paramDate = this.props.match.params.date;
         const today = new Date().toISOString().slice(0, 10);
         const date = (paramDate === undefined) ? String(today) : paramDate;
@@ -108,6 +144,10 @@ export default class DailyView extends Component {
         });
     }
 
+    /**
+     * Call controller to get tasks by date, and store the data in the state.
+     * @param {String} date 
+     */
     async retrieveTasks(date) {
         try {
             const response = await TaskService.findTodayTask(date);
@@ -124,6 +164,10 @@ export default class DailyView extends Component {
         }
     }
 
+    /**
+     * Call controller to get summary by id, and store the data in the state.
+     * @param {String} date 
+     */
     async retrieveSummary(date) {
         try {
             const response = await SummaryService.findTodaySummary(date);
@@ -139,18 +183,50 @@ export default class DailyView extends Component {
     }
 
     /**
+     * Helper to get weather information from openweathermap.org.
+     */
+    async retrieveWeather() {
+        try {
+            const response = await WeatherSerive.getWeather();
+            this.setState({
+                weather: response.data,
+            })
+        } catch(err) {
+            console.log(err);
+        }
+    }
+
+    /**
      * Render DailyView component
      */
     render() {
         const {
             currentTask, summary, tasks, date, deleteMessage,
-            summaryMessage, taskMessage, currentIdx,
+            summaryMessage, taskMessage, currentIdx, weather, isToday,
         } = this.state;
-
         return (
-            <div className="list row">
-                <div style={{ marginBottom: '1rem' }}>
-                    <h3>{date}</h3>
+            <div>
+                <div className="list row">
+                    <div className="col-md-6">
+                        <h1>{date}</h1>
+                    </div>
+                    <div className="col-md-3">
+                        {isToday === true ? (
+                            <div>
+                                <div>
+                                    <img
+                                        src={"http://openweathermap.org/img/w/"+weather['weather'][0]['icon']+".png"}
+                                        alt="weather icon"
+                                        className="photo"
+                                        title={weather['weather'][0]['main']+": "+weather['weather'][0]['description']}
+                                        style={styles.weather_style}
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            <div></div>
+                        )}
+                    </div>
                 </div>
                 <div className="list row">
                     <div className="col-md-6" style={{ marginBottom: '2rem' }}>
@@ -171,6 +247,12 @@ export default class DailyView extends Component {
                         </div>
                         {taskMessage === '' ? (
                             <div>
+                                <Link
+                                    to={"/pie/"+date}
+                                    className="badge badge-info mr-2"
+                                >
+                                    Visualization
+                                </Link>
                                 <ul className="list-group">
                                     {tasks
                                     && tasks.map((task) => (
@@ -252,6 +334,7 @@ export default class DailyView extends Component {
                                                 alt="mood of summary"
                                                 className="photo"
                                                 style={styles.image_style}
+                                                title={summary.mood}
                                             />
                                         </div>
                                     )}
