@@ -1,10 +1,22 @@
 Web_calendar
 ====================
-project-xz45-1.3
-------------------
-* Added backend for visualization
-* Data visualization for everyday tasks
-* Added weather API
+Project Purpose
+-----------------
+
+The project provides a user-friendly interface that allows the user to schedule daily tasks. Users can mark up whether they finish the tasks or not. Moreover, They can also write down their feedbacks or summaries at the end of each day. In general, we want to create this project to better plan our life and record life.
+
+Project Motivation
+-------------------
+
+Current web calendars like Google Calendar usually have professional UI for monthly overview. We would like to build a new one with extension that focuses more on daily planning, which is more like a diary or planner and give users more options in creating their agenda.
+
+Features
+---------------
+- Monthly, weekly Overview
+- Daily plan editing
+- Daily summary
+- Data(Task) analysis
+- CRUD operations for daily To-do List
 
 Prerequisite and environment
 -------------
