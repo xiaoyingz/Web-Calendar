@@ -13,12 +13,24 @@ React\
 React-router-dom\
 React-router
 
+Compile
+---------------
+* Run the server:
+```
+cd backend_together
+Python3 server.py
+```
+* Render Web Page:
+```
+cd frontend_together
+npm start
+```
 User guide for summary's query operators
 ------------
 * There will be at most one of bounded, logic, and time filter operators
 * : is used to specify attribute, i.e. content: \<query\>
 * Substring quoted by "" means 'contains', otherwise exactly match
-* 'BETWEEN', 'AFTER', 'BEFORE' are filters for _id attribute, use $ to specify time range. For example: 
+* 'BETWEEN', 'AFTER', 'BEFORE' are filters for _id attribute, use $ to specify time range. For example:
     ```
     _id: BETWEEN $2010-12-05 $2021-3-15
     _id: AFTER $2020-07-10
